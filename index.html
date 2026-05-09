@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS System Fixed Print</title>
+    <title>POS System & Money Exchange</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap');
 
@@ -13,7 +13,8 @@
             --info: #0284c7;     
             --danger: #dc2626;   
             --warning: #f59e0b;
-            --dark: #000000; /* เปลี่ยนเป็นดำสนิท */
+            --purple: #8b5cf6;
+            --dark: #000000;
             --bg: #f1f5f9;
         }
 
@@ -26,181 +27,126 @@
             min-height: 100vh;
         }
 
+        /* --- Main POS Paper --- */
         .paper {
-            background: white;
-            width: 100%; max-width: 500px;
-            padding: 25px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            display: flex; flex-direction: column;
-            border-top: 8px solid var(--primary);
-            position: relative;
+            background: white; width: 100%; max-width: 500px; padding: 25px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-radius: 12px;
+            display: flex; flex-direction: column; border-top: 8px solid var(--primary);
+            position: relative; margin-bottom: 50px;
         }
 
-        /* --- Header --- */
         .header-layout { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #ccc; }
         .row-split { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; gap: 10px; }
         .field-box { display: flex; align-items: baseline; gap: 8px; }
         .field-label { font-weight: 700; font-size: 16px; white-space: nowrap; }
-        
         .input-dotted {
-            border: none; border-bottom: 1px dotted #000;
-            font-family: 'Sarabun'; font-size: 16px; color: #000;
-            padding: 0 5px; outline: none; background: transparent;
-            text-align: center; width: 100px; font-weight: 600;
+            border: none; border-bottom: 1px dotted #000; font-family: 'Sarabun'; font-size: 16px; 
+            color: #000; padding: 0 5px; outline: none; background: transparent; text-align: center; width: 100px; font-weight: 600;
         }
         .w-full { width: 100%; flex: 1; text-align: left; }
         .icon-btn { font-size: 16px; color: #666; cursor: pointer; transition: 0.2s; }
-        .icon-btn:hover { color: var(--primary); transform: scale(1.2); }
 
-        /* --- Input Area --- */
-        .input-card { 
-            margin-bottom: 20px; padding: 15px; 
-            background: #f8fafc; border-radius: 10px; border: 1px solid #ccc;
-        }
+        .input-card { margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 10px; border: 1px solid #ccc; }
         .input-card.editing { border-color: var(--warning); background: #fffbeb; }
-
         .type-selector { display: flex; gap: 5px; margin-bottom: 10px; }
-        .type-label {
-            flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer; 
-            font-size: 14px; font-weight: 600; border: 1px solid #cbd5e1; color: #666; background: white;
-        }
+        .type-label { flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; border: 1px solid #cbd5e1; color: #666; background: white; }
         input[type="radio"] { display: none; }
         input:checked + .lbl-transfer { background: var(--success); color: white; border-color: var(--success); }
         input:checked + .lbl-welfare { background: var(--info); color: white; border-color: var(--info); }
         input:checked + .lbl-expense { background: var(--danger); color: white; border-color: var(--danger); }
-
         .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .input-field {
-            padding: 10px; border: 2px solid #ccc; border-radius: 8px; 
-            font-size: 16px; outline: none; width: 100%; font-family: 'Sarabun';
-        }
-        .input-field:focus { border-color: var(--primary); }
-        .btn-save { 
-            width: 100%; background: #000; color: white; border: none; 
-            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; 
-        }
+        .input-field { padding: 10px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; width: 100%; font-family: 'Sarabun'; box-sizing: border-box; }
+        .btn-save { width: 100%; background: #000; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; }
 
-        /* --- Table --- */
-        .table-wrapper {
-            height: 320px; overflow-y: auto; margin-bottom: 20px;
-            border: 1px solid #ccc; border-radius: 8px;
-        }
+        .table-wrapper { height: 320px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { 
-            position: sticky; top: 0; background: #f1f5f9; text-align: left; 
-            padding: 8px; font-size: 13px; color: #666; border-bottom: 2px solid #ccc; z-index: 2;
-        }
+        th { position: sticky; top: 0; background: #f1f5f9; text-align: left; padding: 8px; font-size: 13px; color: #666; border-bottom: 2px solid #ccc; z-index: 2; }
         td { padding: 8px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-
-        /* สีพื้นหลังในจอ */
         tr.row-transfer { background-color: #f0fdf4; } 
         tr.row-welfare { background-color: #f0f9ff; }  
         tr.row-expense { background-color: #fef2f2; }  
-
-        .badge {
-            padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: white;
-            display: inline-block; min-width: 45px; text-align: center;
-        }
-        .bg-tr { background: var(--success); }
-        .bg-wel { background: var(--info); }
-        .bg-exp { background: var(--danger); }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: white; display: inline-block; min-width: 45px; text-align: center; }
+        .bg-tr { background: var(--success); } .bg-wel { background: var(--info); } .bg-exp { background: var(--danger); }
         .edit-tag { font-size: 10px; color: #d97706; font-weight: bold; margin-left: 5px; }
-
         .action-btn { cursor: pointer; padding: 4px; }
 
-        /* --- Footer --- */
         .footer-stats { background: #f8fafc; border-radius: 8px; padding: 15px; border: 1px solid #ccc; margin-bottom: 20px; }
         .sum-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
         .sum-row.highlight { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #999; font-weight: 700; font-size: 18px; color: var(--primary); }
 
         .sign-box { width: 48%; text-align: center; }
-        .sign-input {
-            width: 100%; border: none; border-bottom: 1px solid #000; 
-            text-align: center; font-family: 'Sarabun'; font-size: 14px; padding: 5px;
-            background: transparent; outline: none; font-weight: 600;
-        }
+        .sign-input { width: 100%; border: none; border-bottom: 1px solid #000; text-align: center; font-family: 'Sarabun'; font-size: 14px; padding: 5px; background: transparent; outline: none; font-weight: 600; box-sizing: border-box; }
         .sign-label { font-size: 12px; color: #666; margin-top: 5px; }
 
-        .floating-controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-        .float-btn {
-            background: white; border: 1px solid #ccc; padding: 10px 15px;
-            border-radius: 30px; cursor: pointer; font-family: 'Sarabun'; font-weight: 600;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; gap: 5px;
-        }
+        .floating-controls { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 99; }
+        .float-btn { background: white; border: 1px solid #ccc; padding: 10px 15px; border-radius: 30px; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; gap: 5px; align-items: center; transition: 0.2s; }
+        .float-btn:hover { background: #f1f5f9; transform: scale(1.05); }
 
-        /* --- 🖨️ PRINT SETTINGS (แก้ไขใหม่หมด) --- */
+        /* --- 💵 Modal ฟอร์มแลกเงิน --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 12px; padding: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .modal-header h3 { margin: 0; color: var(--purple); font-size: 18px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        
+        .exchange-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 1px solid #ccc; }
+        .exchange-table th, .exchange-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        .exchange-table th { background: #f8fafc; text-align: center; font-size: 14px;}
+        .exchange-input { width: 100%; border: none; border-bottom: 1px solid #ccc; outline: none; font-family: 'Sarabun'; font-size: 16px; text-align: right; padding: 4px; box-sizing: border-box; background: transparent; }
+        .exchange-input:focus { border-bottom: 2px solid var(--purple); }
+        
+        .btn-print-exchange { width: 100%; background: var(--purple); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; margin-top: 10px; transition: 0.2s; }
+        .btn-print-exchange:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        /* --- Printable Exchange Slip --- */
+        #printExchangeArea { display: none; }
+
         @media print {
-            @page { 
-                margin: 0; 
-                size: auto;  /* ให้ยาวต่อเนื่องแบบใบเสร็จ */
-            }
+            @page { margin: 0; size: auto; }
+            body { background: white; margin: 0; padding: 0; color: #000 !important; width: 72mm; }
+            .no-print, .floating-controls { display: none !important; }
             
-            body { 
-                background: white; margin: 0; padding: 0;
-                width: 72mm; /* ปรับให้พอดีเป๊ะ */
-                color: #000 !important;
-            }
-
-            .paper { 
-                width: 100%; max-width: none; padding: 5px; 
-                box-shadow: none; border: none; border-top: none;
-            }
-
-            .no-print, .input-card, .floating-controls, th:last-child, td:last-child { display: none !important; }
-            
-            /* ปลดล็อคความสูงตาราง ให้ยาวลงมาเลย */
-            .table-wrapper { height: auto !important; overflow: visible !important; border: none; }
-            
-            /* ห้ามตัดบรรทัดกลางคัน (แก้ปัญหาข้อ 14 หาย) */
-            table { page-break-inside: auto; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            
-            /* ลบสีพื้นหลัง */
-            tr.row-transfer, tr.row-welfare, tr.row-expense { background-color: transparent !important; }
-            
-            /* --- โหมดหมึกเข้ม (Super Black) --- */
-            * { 
-                text-shadow: none !important; 
-                color: #000 !important; 
-            }
-            
-            .input-dotted, .sign-input { border-bottom: 2px solid #000 !important; font-weight: 800; }
-            
-            /* Badge เป็นกรอบดำหนา */
-            .badge { 
-                border: 2px solid #000; 
-                color: #000 !important; 
-                background: none !important; 
-                font-weight: 800; 
-                padding: 1px 4px;
-            }
-            
-            /* หัวตารางและเส้น */
-            thead { display: table-header-group; } /* ให้หัวตารางอยู่แค่ข้างบน หรือซ้ำถ้าจำเป็น แต่ปกติใบเสร็จยาวจะไม่ซ้ำ */
-            th { border-bottom: 2px solid #000 !important; font-weight: 900; font-size: 14px; }
-            td { border-bottom: 1px dashed #000 !important; font-weight: 700; font-size: 14px; }
-            
-            .col-amt { text-align: right; white-space: nowrap; font-weight: 800; }
-            
-            .footer-stats { border: 2px solid #000; background: none; margin-top: 10px; }
-            .sum-row { color: #000 !important; font-weight: 800; }
-            .sum-row.highlight { border-top: 2px dashed #000; }
-
-            /* โหมดพิมพ์ย่อ */
+            body:not(.printing-exchange) .paper { width: 100%; max-width: none; padding: 5px; box-shadow: none; border: none; }
+            body:not(.printing-exchange) .input-card, body:not(.printing-exchange) th:last-child, body:not(.printing-exchange) td:last-child { display: none !important; }
+            body:not(.printing-exchange) .table-wrapper { height: auto !important; overflow: visible !important; border: none; }
+            body:not(.printing-exchange) tr { page-break-inside: avoid; }
+            body:not(.printing-exchange) tr.row-transfer, body:not(.printing-exchange) tr.row-welfare, body:not(.printing-exchange) tr.row-expense { background-color: transparent !important; }
+            body:not(.printing-exchange) .input-dotted, body:not(.printing-exchange) .sign-input { border-bottom: 2px solid #000 !important; font-weight: 800; }
+            body:not(.printing-exchange) .badge { border: 2px solid #000; color: #000 !important; background: none !important; font-weight: 800; padding: 1px 4px; }
+            body:not(.printing-exchange) th { border-bottom: 2px solid #000 !important; font-weight: 900; }
+            body:not(.printing-exchange) td { border-bottom: 1px dashed #000 !important; font-weight: 700; }
+            body:not(.printing-exchange) .footer-stats { border: 2px solid #000; background: none; margin-top: 10px; }
             body.print-summary-only .table-wrapper { display: none; }
+
+            /* โชว์เฉพาะสลิปแลกเงิน */
+            body.printing-exchange .paper { display: none !important; }
+            body.printing-exchange #printExchangeArea { display: block !important; width: 100%; padding: 5px; font-family: 'Sarabun', sans-serif; }
+            
+            .slip-ex-header { font-size: 12px; margin-bottom: 10px; text-align: left; line-height: 1.4; border-bottom: 1px dashed #000; padding-bottom: 5px; }
+            .slip-ex-title { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+            
+            .slip-ex-table { width: 100%; border-collapse: collapse; margin-top: 5px; border: 2px solid #000; }
+            .slip-ex-table th, .slip-ex-table td { border: 1px solid #000; padding: 6px 5px; font-size: 14px; font-weight: bold; color: #000; }
+            .slip-ex-table th { text-align: center; background: #eee; }
+            .slip-ex-table td:nth-child(2) { text-align: right; }
+            
+            .slip-footer-sig { margin-top: 20px; font-size: 14px; font-weight: bold; text-align: center; }
+            
+            .slip-total-amt { font-size: 16px; font-weight: bold; text-align: center; border: 2px dashed #000; padding: 5px; margin-top: 10px; background: #eee; }
         }
     </style>
 </head>
 <body>
 
     <div class="floating-controls no-print">
+        <button onclick="openExchangeModal()" class="float-btn" style="color: var(--purple);">💵 ขอแลกเงิน</button>
         <button onclick="exportToExcel()" class="float-btn" style="color: green;">📥 Excel (Multi-Col)</button>
         <button onclick="window.print()" class="float-btn">🖨️ พิมพ์ (เต็ม)</button>
         <button onclick="printSummaryOnly()" class="float-btn" style="color: #2563eb;">🎫 พิมพ์ (ย่อ)</button>
         <button onclick="resetAll()" class="float-btn" style="color: red;">↺ เริ่มใหม่</button>
     </div>
 
+    <!-- เครื่อง POS หลัก -->
     <div class="paper">
         <div class="header-layout">
             <div class="row-split">
@@ -211,7 +157,6 @@
                 <div class="field-box">
                     <span class="field-label">วันที่:</span>
                     <span id="headDate" style="font-weight: 600;">--/--/----</span>
-                    <span class="icon-btn no-print">📅</span>
                 </div>
             </div>
             <div class="row-split">
@@ -224,27 +169,21 @@
                 <div class="field-box">
                     <span class="field-label">เข้า:</span>
                     <input type="text" id="headTimeIn" class="input-dotted" placeholder="--:--" onchange="saveHeader()">
-                    <span class="icon-btn no-print" onclick="setNow('headTimeIn')" title="กดเพื่อใส่นาฬิกา">🕒</span>
+                    <span class="icon-btn no-print" onclick="setNow('headTimeIn')">🕒</span>
                 </div>
                 <div class="field-box">
                     <span class="field-label">ออก:</span>
                     <input type="text" id="headTimeOut" class="input-dotted" placeholder="--:--" onchange="saveHeader()">
-                    <span class="icon-btn no-print" onclick="setNow('headTimeOut')" title="กดเพื่อใส่นาฬิกา">🕒</span>
+                    <span class="icon-btn no-print" onclick="setNow('headTimeOut')">🕒</span>
                 </div>
             </div>
         </div>
 
         <div id="inputCard" class="input-card no-print">
             <div class="type-selector">
-                <label class="type-label lbl-transfer">
-                    <input type="radio" name="payType" value="transfer" checked onchange="handleTypeChange()"> 🏦 เงินโอน
-                </label>
-                <label class="type-label lbl-welfare">
-                    <input type="radio" name="payType" value="welfare" onchange="handleTypeChange()"> 💳 บัตร/รัฐ
-                </label>
-                <label class="type-label lbl-expense">
-                    <input type="radio" name="payType" value="expense" onchange="handleTypeChange()"> 💸 ค่าใช้จ่าย
-                </label>
+                <label class="type-label lbl-transfer"><input type="radio" name="payType" value="transfer" checked onchange="handleTypeChange()"> 🏦 เงินโอน</label>
+                <label class="type-label lbl-welfare"><input type="radio" name="payType" value="welfare" onchange="handleTypeChange()"> 💳 บัตร/รัฐ</label>
+                <label class="type-label lbl-expense"><input type="radio" name="payType" value="expense" onchange="handleTypeChange()"> 💸 ค่าใช้จ่าย</label>
             </div>
             <div class="input-row">
                 <input type="text" id="inputName" class="input-field" placeholder="ระบุรายการ..." style="display:none; flex: 2;">
@@ -274,9 +213,7 @@
             <div class="sum-row"><span>ยอดเงินโอน</span> <span id="sumTransfer">0.00</span></div>
             <div class="sum-row"><span>ยอดบัตร/รัฐ</span> <span id="sumWelfare">0.00</span></div>
             <div class="sum-row" style="color: var(--danger);"><span>ค่าใช้จ่าย</span> <span id="sumExpense">0.00</span></div>
-            <div class="sum-row highlight">
-                <span>สุทธิ (โอน+บัตร)</span> <span id="sumNet">0.00</span>
-            </div>
+            <div class="sum-row highlight"><span>สุทธิ (โอน+บัตร)</span> <span id="sumNet">0.00</span></div>
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 10px;">
@@ -291,7 +228,75 @@
         </div>
     </div>
 
+    <!-- ==================== MODAL ขอแลกเงิน ==================== -->
+    <div id="exchangeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💵 ขอแลกเงิน</h3>
+                <button class="close-btn" onclick="closeExchangeModal()">×</button>
+            </div>
+
+            <table class="exchange-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">รายการเงินแลก</th>
+                        <th style="width: 50%;">จำนวนบาท</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>500</td><td><input type="number" id="ex_500" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>100</td><td><input type="number" id="ex_100" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>50</td><td><input type="number" id="ex_50" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>20</td><td><input type="number" id="ex_20" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>เหรียญ 10</td><td><input type="number" id="ex_c10" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>เหรียญ 5</td><td><input type="number" id="ex_c5" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>เหรียญ 2</td><td><input type="number" id="ex_c2" class="exchange-input" oninput="calcExchange()"></td></tr>
+                    <tr><td>เหรียญ 1</td><td><input type="number" id="ex_c1" class="exchange-input" oninput="calcExchange()"></td></tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f8fafc;">
+                        <th style="text-align: right;">รวมเงินทั้งหมด:</th>
+                        <th id="exTotalTxt" style="text-align: right; color: var(--purple); font-size: 18px;">0</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <button id="btnExSubmit" class="btn-print-exchange" onclick="executePrintExchange()" disabled>🖨️ พิมพ์ใบแลกเงิน</button>
+        </div>
+    </div>
+
+    <!-- ==================== โซนพิมพ์ใบแลกเงิน ==================== -->
+    <div id="printExchangeArea">
+        <div class="slip-ex-title">ขอแลกเงิน</div>
+        
+        <div class="slip-ex-header">
+            <div>วันที่: <span id="slipExDate"></span> เวลา: <span id="slipExTime"></span></div>
+            <div>แคชเชียร์: <span id="slipExCashier" style="font-weight: bold;"></span></div>
+        </div>
+
+        <table class="slip-ex-table">
+            <thead>
+                <tr>
+                    <th>รายการเงินแลก</th>
+                    <th>จำนวนบาท</th>
+                </tr>
+            </thead>
+            <tbody id="slipExBody">
+                <!-- ข้อมูลจะถูกดึงมาใส่ตรงนี้ตอนกดพิมพ์ -->
+            </tbody>
+        </table>
+
+        <div class="slip-total-amt">
+            รวมเงินทั้งหมด: <span id="slipTotalVal">0</span> บาท
+        </div>
+        
+        <div class="slip-footer-sig">
+            ผู้รับเงิน ......................................
+        </div>
+    </div>
+
     <script>
+        // ================= POS CORE SCRIPT =================
         let records = JSON.parse(localStorage.getItem('posUltimateRecords')) || [];
         let editingIndex = -1; 
         let headerData = JSON.parse(localStorage.getItem('posUltimateHeader')) || {};
@@ -308,27 +313,21 @@
         document.getElementById('headDate').innerText = today.toLocaleDateString('th-TH');
         if(!document.getElementById('headTimeIn').value) setNow('headTimeIn');
 
-        handleTypeChange();
-        renderTable();
+        function escapeHTML(str) {
+            if (!str) return '-';
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        handleTypeChange(); renderTable();
 
         function saveHeader() {
-            localStorage.setItem('posUltimateHeader', JSON.stringify({
-                pos: document.getElementById('headPos').value,
-                cashier: document.getElementById('headCashier').value,
-                timeIn: document.getElementById('headTimeIn').value,
-                timeOut: document.getElementById('headTimeOut').value
-            }));
+            localStorage.setItem('posUltimateHeader', JSON.stringify({ pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value, timeIn: document.getElementById('headTimeIn').value, timeOut: document.getElementById('headTimeOut').value }));
         }
         function saveSignatures() {
-            localStorage.setItem('posUltimateSigners', JSON.stringify({
-                s1: document.getElementById('signer1').value,
-                s2: document.getElementById('signer2').value
-            }));
+            localStorage.setItem('posUltimateSigners', JSON.stringify({ s1: document.getElementById('signer1').value, s2: document.getElementById('signer2').value }));
         }
         function setNow(elementId) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById(elementId).value = timeStr;
+            document.getElementById(elementId).value = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
             saveHeader();
         }
 
@@ -336,28 +335,15 @@
             const type = document.querySelector('input[name="payType"]:checked').value;
             const nameInput = document.getElementById('inputName');
             const amtInput = document.getElementById('inputAmount');
-
-            if (type === 'transfer') {
-                nameInput.style.display = 'none';
-                nameInput.value = 'เงินโอน';
-                amtInput.placeholder = "ยอดเงินโอน...";
-                amtInput.focus();
-            } else {
-                nameInput.style.display = 'block';
-                if(editingIndex === -1 && nameInput.value === 'เงินโอน') nameInput.value = '';
-                amtInput.placeholder = "0.00";
-                nameInput.focus();
-            }
+            if (type === 'transfer') { nameInput.style.display = 'none'; nameInput.value = 'เงินโอน'; amtInput.placeholder = "ยอดเงินโอน..."; amtInput.focus(); } 
+            else { nameInput.style.display = 'block'; if(editingIndex === -1 && nameInput.value === 'เงินโอน') nameInput.value = ''; amtInput.placeholder = "0.00"; nameInput.focus(); }
         }
 
         document.getElementById('inputAmount').addEventListener("keypress", function(e) { if (e.key === "Enter") saveRecord(); });
-        document.getElementById('inputName').addEventListener("keypress", function(e) { 
-            if (e.key === "Enter" && this.value.trim() !== "") document.getElementById('inputAmount').focus(); 
-        });
+        document.getElementById('inputName').addEventListener("keypress", function(e) { if (e.key === "Enter" && this.value.trim() !== "") document.getElementById('inputAmount').focus(); });
 
         function saveRecord() {
-            const amtIn = document.getElementById('inputAmount');
-            const nameIn = document.getElementById('inputName');
+            const amtIn = document.getElementById('inputAmount'), nameIn = document.getElementById('inputName');
             const type = document.querySelector('input[name="payType"]:checked').value;
             const amount = parseFloat(amtIn.value);
             let name = nameIn.value.trim() || "-";
@@ -365,175 +351,126 @@
             if (isNaN(amount) || amount === 0) return;
 
             if (editingIndex > -1) {
-                records[editingIndex].amount = amount;
-                records[editingIndex].name = name;
-                records[editingIndex].type = type;
-                records[editingIndex].isEdited = true;
+                records[editingIndex] = { ...records[editingIndex], amount, name, type, isEdited: true };
                 cancelEdit();
             } else {
-                const now = new Date();
-                records.push({
-                    time: now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}),
-                    type: type,
-                    name: name,
-                    amount: amount,
-                    isEdited: false
-                });
-                setTimeout(() => {
-                    const wrapper = document.querySelector('.table-wrapper');
-                    wrapper.scrollTop = wrapper.scrollHeight;
-                }, 100);
+                records.push({ time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}), type, name, amount, isEdited: false });
+                setTimeout(() => { const w = document.querySelector('.table-wrapper'); w.scrollTop = w.scrollHeight; }, 100);
             }
-            saveAndRender();
-            amtIn.value = '';
-            if(type !== 'transfer') nameIn.value = '';
+            saveAndRender(); amtIn.value = ''; if(type !== 'transfer') nameIn.value = '';
             if (type === 'transfer') amtIn.focus(); else nameIn.focus();
         }
 
         function startEdit(index) {
-            editingIndex = index;
-            const r = records[index];
+            editingIndex = index; const r = records[index];
             document.querySelector(`input[name="payType"][value="${r.type}"]`).checked = true;
-            handleTypeChange();
-            document.getElementById('inputName').value = r.name;
-            document.getElementById('inputAmount').value = r.amount;
-
-            const btn = document.getElementById('btnSave');
-            btn.innerHTML = "💾 บันทึกการแก้ไข";
-            btn.style.background = "#f59e0b";
-            document.getElementById('inputCard').classList.add('editing');
-            document.getElementById('editLabel').style.display = 'block';
+            handleTypeChange(); document.getElementById('inputName').value = r.name; document.getElementById('inputAmount').value = r.amount;
+            const btn = document.getElementById('btnSave'); btn.innerHTML = "💾 บันทึกการแก้ไข"; btn.style.background = "#f59e0b";
+            document.getElementById('inputCard').classList.add('editing'); document.getElementById('editLabel').style.display = 'block';
         }
 
         function cancelEdit() {
-            editingIndex = -1;
-            const btn = document.getElementById('btnSave');
-            btn.innerHTML = "บันทึกรายการ";
-            btn.style.background = "#000";
-            document.getElementById('inputCard').classList.remove('editing');
-            document.getElementById('editLabel').style.display = 'none';
-            document.querySelector(`input[name="payType"][value="transfer"]`).checked = true;
-            handleTypeChange();
-            document.getElementById('inputAmount').value = '';
+            editingIndex = -1; const btn = document.getElementById('btnSave'); btn.innerHTML = "บันทึกรายการ"; btn.style.background = "#000";
+            document.getElementById('inputCard').classList.remove('editing'); document.getElementById('editLabel').style.display = 'none';
+            document.querySelector(`input[name="payType"][value="transfer"]`).checked = true; handleTypeChange(); document.getElementById('inputAmount').value = '';
         }
 
-        function deleteRecord(index) {
-            if(confirm('ลบรายการนี้?')) {
-                if(editingIndex === index) cancelEdit();
-                records.splice(index, 1);
-                saveAndRender();
-            }
-        }
-
-        function resetAll() {
-            if(confirm('⚠️ ล้างข้อมูลเริ่มกะใหม่? (คนเก่าจะถูกลบชื่อออกนะ)')) {
-                records = [];
-                document.getElementById('headTimeOut').value = '';
-                document.getElementById('signer1').value = '';
-                document.getElementById('signer2').value = '';
-                cancelEdit();
-                saveHeader();
-                saveSignatures(); 
-                saveAndRender();
-            }
-        }
-
-        function saveAndRender() {
-            localStorage.setItem('posUltimateRecords', JSON.stringify(records));
-            renderTable();
-        }
+        function deleteRecord(index) { if(confirm('ลบรายการนี้?')) { if(editingIndex === index) cancelEdit(); records.splice(index, 1); saveAndRender(); } }
+        function resetAll() { if(confirm('⚠️ ล้างข้อมูลเริ่มกะใหม่?')) { records = []; document.getElementById('headTimeOut').value = ''; document.getElementById('signer1').value = ''; document.getElementById('signer2').value = ''; cancelEdit(); saveHeader(); saveSignatures(); saveAndRender(); } }
+        function saveAndRender() { localStorage.setItem('posUltimateRecords', JSON.stringify(records)); renderTable(); }
 
         function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            let t=0, w=0, e=0;
+            const tbody = document.getElementById('tableBody'); let t=0, w=0, e=0;
+            tbody.innerHTML = records.map((r, i) => {
+                const amt = Math.round(r.amount * 100);
+                if (r.type === 'transfer') t += amt; else if (r.type === 'welfare') w += amt; else e += amt;
+                let badge = r.type==='transfer' ? '<span class="badge bg-tr">โอน</span>' : r.type==='welfare' ? '<span class="badge bg-wel">บัตร</span>' : '<span class="badge bg-exp">จ่าย</span>';
+                let cls = r.type==='transfer' ? 'row-transfer' : r.type==='welfare' ? 'row-welfare' : 'row-expense';
+                let name = r.type==='transfer' ? '-' : escapeHTML(r.name);
+                let edit = r.isEdited ? '<span class="edit-tag">(แก้ไข)</span>' : '';
+                return `<tr class="${cls}"><td style="text-align:center; color:#ccc;">${i+1}</td><td style="font-size:12px; color:#666;">${r.time}</td><td style="text-align:center;">${badge}</td><td>${name}${edit}</td><td class="col-amt">${r.amount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td><td class="no-print" style="text-align:center;"><span class="action-btn" onclick="startEdit(${i})">✏️</span> <span class="action-btn" style="color:red;" onclick="deleteRecord(${i})">×</span></td></tr>`;
+            }).join('');
+            document.getElementById('sumTransfer').innerText = (t/100).toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('sumWelfare').innerText = (w/100).toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('sumExpense').innerText = (e/100).toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('sumNet').innerText = ((t+w)/100).toLocaleString(undefined, {minimumFractionDigits:2});
+        }
+        function printSummaryOnly() { document.body.classList.add('print-summary-only'); window.print(); setTimeout(() => document.body.classList.remove('print-summary-only'), 1000); }
 
-            records.forEach((r, i) => {
-                if(r.type==='transfer') t+=r.amount; else if(r.type==='welfare') w+=r.amount; else e+=r.amount;
+        // ================= EXCHANGE MODAL SCRIPT =================
+        const exFields = ['500', '100', '50', '20', 'c10', 'c5', 'c2', 'c1'];
+        const exLabels = ['500', '100', '50', '20', 'เหรียญ 10', 'เหรียญ 5', 'เหรียญ 2', 'เหรียญ 1'];
 
-                let badgeHTML = '', rowClass = '';
-                if(r.type === 'transfer') { badgeHTML = '<span class="badge bg-tr">โอน</span>'; rowClass = 'row-transfer'; }
-                else if(r.type === 'welfare') { badgeHTML = '<span class="badge bg-wel">บัตร</span>'; rowClass = 'row-welfare'; }
-                else { badgeHTML = '<span class="badge bg-exp">จ่าย</span>'; rowClass = 'row-expense'; }
+        function openExchangeModal() { 
+            // ล้างค่าเก่าทุกครั้งที่กดเปิด
+            exFields.forEach(f => document.getElementById(`ex_${f}`).value = '');
+            calcExchange(); 
+            document.getElementById('exchangeModal').style.display = 'flex'; 
+        }
+        
+        function closeExchangeModal() { document.getElementById('exchangeModal').style.display = 'none'; }
 
-                let displayName = r.type==='transfer' ? '-' : r.name;
-                let editTag = r.isEdited ? '<span class="edit-tag">(แก้ไข)</span>' : '';
-
-                let row = `<tr class="${rowClass}">
-                    <td style="text-align:center; color:#ccc;">${i+1}</td>
-                    <td style="font-size:12px; color:#666;">${r.time}</td>
-                    <td style="text-align:center;">${badgeHTML}</td>
-                    <td>${displayName}${editTag}</td>
-                    <td class="col-amt">${r.amount.toLocaleString()}</td>
-                    <td class="no-print" style="text-align:center;">
-                        <span class="action-btn" onclick="startEdit(${i})">✏️</span>
-                        <span class="action-btn" style="color:red;" onclick="deleteRecord(${i})">×</span>
-                    </td>
-                </tr>`;
-                tbody.innerHTML += row;
+        function calcExchange() {
+            let totalSub = 0;
+            
+            exFields.forEach(f => { 
+                totalSub += parseFloat(document.getElementById(`ex_${f}`).value) || 0; 
             });
+            
+            let txtTotal = document.getElementById('exTotalTxt');
+            let btn = document.getElementById('btnExSubmit');
+            txtTotal.innerText = totalSub.toLocaleString();
 
-            document.getElementById('sumTransfer').innerText = t.toLocaleString();
-            document.getElementById('sumWelfare').innerText = w.toLocaleString();
-            document.getElementById('sumExpense').innerText = e.toLocaleString();
-            document.getElementById('sumNet').innerText = (t + w).toLocaleString(undefined, {minimumFractionDigits:2});
+            // ปลดล็อกปุ่มพิมพ์เมื่อมีการกรอกยอดมากกว่า 0
+            if (totalSub > 0) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
         }
 
-        function printSummaryOnly() {
-            document.body.classList.add('print-summary-only');
+        function executePrintExchange() {
+            // ดึงข้อมูลวัน-เวลา ปัจจุบันของระบบ
+            const now = new Date();
+            document.getElementById('slipExDate').innerText = now.toLocaleDateString('th-TH');
+            document.getElementById('slipExTime').innerText = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+            
+            // ดึงชื่อแคชเชียร์จากหน้าหลัก POS
+            const cashierName = document.getElementById('headCashier').value.trim() || 'ไม่ระบุชื่อ';
+            document.getElementById('slipExCashier').innerText = escapeHTML(cashierName);
+            
+            let tbody = '';
+            let totalAmount = 0;
+
+            // วนลูปสร้างแถว พิมพ์เฉพาะช่องที่ถูกกรอกตัวเลข
+            exFields.forEach((f, idx) => {
+                let val = document.getElementById(`ex_${f}`).value;
+                if(val && parseFloat(val) > 0) {
+                    tbody += `<tr><td>${exLabels[idx]}</td><td>${parseFloat(val).toLocaleString()}</td></tr>`;
+                    totalAmount += parseFloat(val);
+                }
+            });
+            document.getElementById('slipExBody').innerHTML = tbody;
+            
+            // แสดงยอดรวมด้านล่างสลิป
+            document.getElementById('slipTotalVal').innerText = totalAmount.toLocaleString();
+
+            // เปลี่ยนโหมด CSS เพื่อสั่งพิมพ์เฉพาะใบแลกเงิน
+            document.body.classList.add('printing-exchange');
+            closeExchangeModal();
             window.print();
-            setTimeout(() => { document.body.classList.remove('print-summary-only'); }, 1000);
+            setTimeout(() => { document.body.classList.remove('printing-exchange'); }, 1000);
         }
 
+        // ================= Excel Export =================
         function exportToExcel() {
             if(records.length === 0) { alert('ไม่มีข้อมูล'); return; }
-            const ITEMS_PER_COLUMN = 35; 
-            const totalRecords = records.length;
-            let t=0, w=0, e=0;
-            records.forEach(r => { if(r.type==='transfer') t+=r.amount; else if(r.type==='welfare') w+=r.amount; else e+=r.amount; });
-
-            let dateStr = document.getElementById('headDate').innerText;
-            let cashier = document.getElementById('headCashier').value;
-            let s1 = document.getElementById('signer1').value || '-';
-            let s2 = document.getElementById('signer2').value || '-';
-            
-            let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>table{border-collapse:collapse;}th{background:#eee;border:1px solid #000;text-align:center;}td{border:1px solid #ccc;padding:5px;}.bg-g{background:#d1fae5;}.bg-b{background:#e0f2fe;}.bg-r{background:#fee2e2;}</style></head><body><h3>รายงานยอดขาย ${dateStr} (${cashier})</h3><table><thead><tr>`;
-            
-            let columnSets = Math.ceil(totalRecords / ITEMS_PER_COLUMN);
-            if(columnSets < 1) columnSets = 1;
-
-            for(let c=0; c<columnSets; c++) {
-                html += `<th>เวลา</th><th>ประเภท</th><th>รายการ</th><th>ยอดเงิน</th>`;
-                if(c < columnSets - 1) html += `<th style="border:none;width:20px;"></th>`; 
-            }
-            html += `</tr></thead><tbody>`;
-
-            for(let r=0; r<ITEMS_PER_COLUMN; r++) {
-                if(r >= totalRecords && r >= ITEMS_PER_COLUMN) break; 
-                html += `<tr>`;
-                for(let c=0; c<columnSets; c++) {
-                    let dataIndex = r + (c * ITEMS_PER_COLUMN);
-                    let rec = records[dataIndex];
-                    if(rec) {
-                        let bg = rec.type==='transfer'?'bg-g':(rec.type==='welfare'?'bg-b':'bg-r');
-                        let remark = rec.isEdited ? '(แก้ไข)' : '';
-                        html += `<td class="${bg}">${rec.time}</td><td class="${bg}">${rec.type}</td><td class="${bg}">${rec.name} ${remark}</td><td class="${bg}">${rec.amount}</td>`;
-                    } else {
-                        html += `<td></td><td></td><td></td><td></td>`;
-                    }
-                    if(c < columnSets - 1) html += `<td style="border:none;"></td>`;
-                }
-                html += `</tr>`;
-            }
-            html += `</tbody></table><br><table border="1" style="margin-top:20px;"><tr><td colspan="2" align="right">รวมเงินโอน:</td><td>${t}</td><td style="border:none; width:20px;"></td><td colspan="2" align="center"><b>ผู้บันทึก:</b></td><td align="center">${s1}</td></tr><tr><td colspan="2" align="right">รวมบัตร/รัฐ:</td><td>${w}</td><td style="border:none;"></td><td colspan="2" align="center"><b>ผู้ตรวจสอบ:</b></td><td align="center">${s2}</td></tr><tr><td colspan="2" align="right" style="color:red;">ค่าใช้จ่าย (ไม่หัก):</td><td style="color:red;">${e}</td></tr><tr><td colspan="2" align="right"><b>สุทธิ (โอน+บัตร):</b></td><td><b>${t+w}</b></td></tr></table></body></html>`;
-            
-            let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `Report_${dateStr.replace(/\//g,'-')}.xls`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            let t=0, w=0, e=0; records.forEach(r => { if(r.type==='transfer') t+=r.amount; else if(r.type==='welfare') w+=r.amount; else e+=r.amount; });
+            let dateStr = document.getElementById('headDate').innerText, cashier = document.getElementById('headCashier').value;
+            let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>table{border-collapse:collapse;}th{background:#eee;border:1px solid #000;}td{border:1px solid #ccc;padding:5px;}.bg-g{background:#d1fae5;}.bg-b{background:#e0f2fe;}.bg-r{background:#fee2e2;}</style></head><body><h3>รายงานยอดขาย ${dateStr} (${cashier})</h3><table><thead><tr><th>เวลา</th><th>ประเภท</th><th>รายการ</th><th>ยอดเงิน</th></tr></thead><tbody>`;
+            records.forEach(r => { let bg = r.type==='transfer'?'bg-g':(r.type==='welfare'?'bg-b':'bg-r'); html += `<tr><td class="${bg}">${r.time}</td><td class="${bg}">${r.type}</td><td class="${bg}">${escapeHTML(r.name)}</td><td class="${bg}">${r.amount}</td></tr>`; });
+            html += `</tbody></table></body></html>`;
+            let link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([html], { type: 'application/vnd.ms-excel' })); link.download = `Report_${dateStr.replace(/\//g,'-')}.xls`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
 </body>
