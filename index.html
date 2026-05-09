@@ -19,11 +19,9 @@
             display: flex; justify-content: center; min-height: 100vh;
         }
 
-        /* --- ซ่อนลูกศรขึ้น/ลง ใน input type="number" ป้องกันการคลิกพลาด --- */
+        /* --- ซ่อนลูกศรขึ้น/ลง ใน input type="number" --- */
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; margin: 0; 
-        }
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
         /* --- Main POS Paper --- */
@@ -40,7 +38,6 @@
         .field-label { font-weight: 700; font-size: 16px; white-space: nowrap; }
         .input-dotted { border: none; border-bottom: 1px dotted #000; font-family: 'Sarabun'; font-size: 16px; color: #000; padding: 0 5px; outline: none; background: transparent; text-align: center; width: 100px; font-weight: 600; }
         .w-full { width: 100%; flex: 1; text-align: left; }
-        .icon-btn { font-size: 16px; color: #666; cursor: pointer; transition: 0.2s; }
 
         .input-card { margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 10px; border: 1px solid #ccc; }
         .type-selector { display: flex; gap: 5px; margin-bottom: 10px; }
@@ -52,7 +49,8 @@
         
         .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .input-field { padding: 10px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; width: 100%; font-family: 'Sarabun'; box-sizing: border-box; }
-        .btn-save { width: 100%; background: #000; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; }
+        .btn-save { width: 100%; background: #000; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; transition: 0.2s; }
+        .btn-save:hover { background: #333; }
 
         .table-wrapper { height: 320px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -61,7 +59,7 @@
         tr.row-transfer { background-color: #f0fdf4; } tr.row-welfare { background-color: #f0f9ff; } tr.row-expense { background-color: #fef2f2; }  
         .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: white; display: inline-block; min-width: 45px; text-align: center; }
         .bg-tr { background: var(--success); } .bg-wel { background: var(--info); } .bg-exp { background: var(--danger); }
-        .action-btn { cursor: pointer; padding: 4px; }
+        .action-btn { cursor: pointer; padding: 4px; font-size: 16px; }
 
         .footer-stats { background: #f8fafc; border-radius: 8px; padding: 15px; border: 1px solid #ccc; margin-bottom: 20px; }
         .sum-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
@@ -98,42 +96,79 @@
         .btn-action { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; font-size: 16px; margin-top: 10px; color: white; transition: 0.2s; }
         .btn-action:disabled { background: #cbd5e1 !important; cursor: not-allowed; }
 
-        /* ป้องกันโซนพิมพ์กางมาบังหน้าจอปกติ ทำให้คลิกอะไรไม่ได้ */
+        /* --- 📖 ACCORDION MANUAL STYLES --- */
+        .manual-body { font-size: 14px; color: #333; }
+        .acc-btn {
+            background-color: #f8fafc; color: var(--primary); cursor: pointer;
+            padding: 12px 15px; width: 100%; text-align: left; border: 1px solid #cbd5e1;
+            border-radius: 8px; outline: none; transition: 0.2s;
+            font-size: 15px; font-weight: bold; margin-bottom: 5px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .acc-btn:hover { background-color: #e2e8f0; }
+        .acc-btn.active { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; background: #e0f2fe; }
+        .acc-btn::after { content: '\002B'; font-size: 20px; color: var(--primary); font-weight: normal; }
+        .acc-btn.active::after { content: '\2212'; }
+        
+        .acc-content {
+            padding: 0 15px; background-color: white; max-height: 0; overflow: hidden;
+            transition: max-height 0.2s ease-out; border: 1px solid #cbd5e1;
+            border-top: none; margin-bottom: 10px; border-radius: 0 0 8px 8px; margin-top: -5px;
+        }
+        .acc-content p, .acc-content ul, .acc-content ol { margin-top: 10px; margin-bottom: 10px; line-height: 1.5; }
+        .hint-box { background: #fffbeb; border-left: 4px solid var(--warning); padding: 8px; font-size: 13px; color: #92400e; margin: 10px 0; }
+
+        /* ป้องกันโซนพิมพ์กางมาบังหน้าจอปกติ */
         #printExchangeArea, #printDrawerArea { display: none !important; pointer-events: none; }
 
-        /* --- 🖨️ Print Styles --- */
+        /* =========================================
+           🖨️ PRINT STYLES (SUPER BLACK MODE)
+           ========================================= */
         @media print {
-            @page { margin: 0; size: auto; }
-            body { background: white; margin: 0; padding: 0; color: #000 !important; width: 72mm; }
+            @page { margin: 5mm; size: auto; }
+            * { color: #000000 !important; border-color: #000000 !important; text-shadow: none !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: white; margin: 0; padding: 0; width: 100%; height: auto; }
+            
             .no-print, .floating-controls, .modal-overlay { display: none !important; }
             
-            /* ซ่อนหน้าหลัก POS เมื่อพิมพ์สลิปแยก */
+            body:not(.printing-exchange):not(.printing-drawer) .paper { width: 100%; max-width: none !important; padding: 0 !important; box-shadow: none !important; border: none !important; margin: 0 !important; height: auto !important; overflow: visible !important; }
+            body:not(.printing-exchange):not(.printing-drawer) .table-wrapper { height: auto !important; max-height: none !important; overflow: visible !important; border: none !important; }
+            body:not(.printing-exchange):not(.printing-drawer) table { page-break-inside: auto; }
+            body:not(.printing-exchange):not(.printing-drawer) tr { page-break-inside: avoid; page-break-after: auto; }
+            body.print-summary-only .table-wrapper { display: none !important; }
+
             body.printing-exchange .paper, body.printing-drawer .paper { display: none !important; }
-            
-            /* อนุญาตให้โซนพิมพ์แสดงผลเมื่ออยู่ในโหมดของมัน */
             body.printing-exchange #printExchangeArea { display: block !important; width: 100%; padding: 5px; font-family: 'Sarabun', sans-serif; pointer-events: auto; }
             body.printing-drawer #printDrawerArea { display: block !important; width: 100%; padding: 5px; font-family: 'Sarabun', sans-serif; pointer-events: auto; }
 
             .slip-title { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 10px; }
             .slip-header { font-size: 12px; margin-bottom: 10px; line-height: 1.4; border-bottom: 1px dashed #000; padding-bottom: 5px; }
             .slip-table { width: 100%; border-collapse: collapse; margin-top: 5px; border: 2px solid #000; }
-            .slip-table th, .slip-table td { border: 1px solid #000; padding: 6px 5px; font-size: 14px; font-weight: bold; color: #000; }
-            .slip-table th { text-align: center; background: #eee; }
+            .slip-table th, .slip-table td { border: 1px solid #000 !important; padding: 6px 5px; font-size: 14px; font-weight: bold; }
+            .slip-table th { text-align: center; }
             .slip-table td:nth-child(2) { text-align: center; } 
             .slip-table td:nth-child(3) { text-align: right; } 
             .slip-footer-sig { margin-top: 20px; font-size: 14px; font-weight: bold; text-align: center; }
-            .slip-summary-box { border: 2px dashed #000; padding: 8px; margin-top: 10px; font-size: 14px; font-weight: bold; }
+            .slip-summary-box { border: 2px dashed #000 !important; padding: 8px; margin-top: 10px; font-size: 14px; font-weight: bold; }
             .slip-summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+            
+            .badge { background: transparent !important; border: 2px solid #000 !important; color: #000 !important; padding: 1px 4px; font-weight: 900; }
+            .input-dotted { border-bottom: 2px dotted #000 !important; }
+            .header-layout { border-bottom: 2px dashed #000 !important; }
+            th { border-bottom: 2px solid #000 !important; }
+            td { border-bottom: 1px solid #000 !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="floating-controls no-print">
+        <button onclick="openManualModal()" class="float-btn" style="color: var(--primary); border-color: var(--primary);">📖 คู่มือการใช้งาน</button>
         <button onclick="openDrawerModal()" class="float-btn" style="color: #ea580c; border-color: #ea580c;">🧮 นับเงินลิ้นชัก</button>
         <button onclick="openExchangeModal()" class="float-btn" style="color: var(--purple);">💵 ขอแลกเงิน</button>
         <button onclick="exportToExcel()" class="float-btn" style="color: green;">📥 Excel (Multi-Col)</button>
-        <button onclick="window.print()" class="float-btn">🖨️ พิมพ์ POS</button>
+        <button onclick="window.print()" class="float-btn">🖨️ พิมพ์ (เต็ม)</button>
+        <button onclick="printSummaryOnly()" class="float-btn" style="color: #2563eb;">🎫 พิมพ์ (ย่อ)</button>
         <button onclick="resetAll()" class="float-btn" style="color: red;">↺ เริ่มใหม่</button>
     </div>
 
@@ -166,7 +201,7 @@
             </div>
             <div class="input-row">
                 <input type="text" id="inputName" class="input-field" placeholder="ระบุรายการ..." style="display:none; flex: 2;">
-                <input type="number" id="inputAmount" class="input-field" placeholder="0.00" style="flex: 1; text-align: right; font-weight: bold;">
+                <input type="number" id="inputAmount" class="input-field" placeholder="0" style="flex: 1; text-align: right; font-weight: bold;">
             </div>
             <button id="btnSave" onclick="saveRecord()" class="btn-save">บันทึกรายการ</button>
         </div>
@@ -181,10 +216,10 @@
         </div>
 
         <div class="footer-stats">
-            <div class="sum-row"><span>ยอดเงินโอน</span> <span id="sumTransfer">0.00</span></div>
-            <div class="sum-row"><span>ยอดบัตร/รัฐ</span> <span id="sumWelfare">0.00</span></div>
-            <div class="sum-row" style="color: var(--danger);"><span>ค่าใช้จ่าย</span> <span id="sumExpense">0.00</span></div>
-            <div class="sum-row highlight"><span>สุทธิ (โอน+บัตร)</span> <span id="sumNet">0.00</span></div>
+            <div class="sum-row"><span>ยอดเงินโอน</span> <span id="sumTransfer">0</span></div>
+            <div class="sum-row"><span>ยอดบัตร/รัฐ</span> <span id="sumWelfare">0</span></div>
+            <div class="sum-row" style="color: var(--danger);"><span>ค่าใช้จ่าย</span> <span id="sumExpense">0</span></div>
+            <div class="sum-row highlight"><span>สุทธิ (โอน+บัตร)</span> <span id="sumNet">0</span></div>
         </div>
     </div>
 
@@ -195,33 +230,27 @@
                 <h3 style="color: #ea580c;">🧮 นับเงินในลิ้นชัก</h3>
                 <button class="close-btn" onclick="closeDrawerModal()">×</button>
             </div>
-
+            <div style="font-size: 12px; color: #666; text-align: center; margin-bottom: 10px;">💡 คีย์เลขแล้วกด Enter ↵ เพื่อเลื่อนลงช่องถัดไป</div>
             <table class="table-grid">
                 <thead><tr><th>ชนิดเงิน</th><th>จำนวน (ใบ/เหรียญ)</th><th>รวมมูลค่า</th></tr></thead>
                 <tbody id="drawerTableBody"></tbody>
             </table>
-
             <div class="drawer-summary">
-                <div class="ds-row"><span>เงินทอนตั้งต้น:</span> <span style="font-weight:bold;">9,700.00</span></div>
-                
+                <div class="ds-row"><span>เงินทอนตั้งต้น:</span> <span style="font-weight:bold;">9,700</span></div>
                 <div class="ds-row" style="color: var(--success);">
                     <span>บวก ยอดขายเงินสด:</span> 
                     <input type="number" id="dsCashSales" class="num-input" style="width: 90px; text-align: right;" placeholder="0" oninput="calcDrawer()">
                 </div>
-                
-                <div class="ds-row" style="color: var(--danger);"><span>หัก ค่าใช้จ่ายระหว่างวัน:</span> <span id="dsExpense">-0.00</span></div>
-                
+                <div class="ds-row" style="color: var(--danger);"><span>หัก ค่าใช้จ่ายระหว่างวัน:</span> <span id="dsExpense">-0</span></div>
                 <div class="ds-divider"></div>
                 <div class="ds-row" style="color: var(--primary);">
-                    <span>ยอดที่ควรมีในลิ้นชัก (Expected):</span> <span id="dsExpected" style="font-weight:bold;">9,700.00</span>
+                    <span>ยอดที่ควรมี (Expected):</span> <span id="dsExpected" style="font-weight:bold;">9,700</span>
                 </div>
                 <div class="ds-total">
-                    <span>ยอดที่นับได้จริง (Actual):</span> <span id="dsActual">0.00</span>
+                    <span>ยอดที่นับได้จริง (Actual):</span> <span id="dsActual">0</span>
                 </div>
-                
                 <div id="dsDiffBox" class="ds-diff status-short">รอการนับเงิน...</div>
             </div>
-
             <button id="btnDrSubmit" class="btn-action" style="background: #ea580c;" onclick="executePrintDrawer()" disabled>🖨️ พิมพ์ใบนับเงิน</button>
         </div>
     </div>
@@ -233,14 +262,75 @@
                 <h3 style="color: var(--purple);">💵 ขอแลกเงิน</h3>
                 <button class="close-btn" onclick="closeExchangeModal()">×</button>
             </div>
-
+            <div style="font-size: 12px; color: #666; text-align: center; margin-bottom: 10px;">💡 คีย์เลขแล้วกด Enter ↵ เพื่อเลื่อนลงช่องถัดไป</div>
             <table class="table-grid">
                 <thead><tr><th style="width: 50%;">รายการเงินแลก</th><th style="width: 50%;">จำนวนบาท</th></tr></thead>
                 <tbody id="exchangeTableBody"></tbody>
                 <tfoot><tr><th style="text-align: right;">รวมเงินทั้งหมด:</th><th id="exTotalTxt" style="text-align: right; color: var(--purple); font-size: 18px;">0</th></tr></tfoot>
             </table>
-
             <button id="btnExSubmit" class="btn-action" style="background: var(--purple);" onclick="executePrintExchange()" disabled>🖨️ พิมพ์ใบแลกเงิน</button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL คู่มือการใช้งาน (Accordion) ==================== -->
+    <div id="manualModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 style="color: var(--primary);">📖 คู่มือการใช้งานระบบ</h3>
+                <button class="close-btn" onclick="closeManualModal()">×</button>
+            </div>
+            <div class="manual-body">
+                <div class="hint-box">
+                    <b>💡 เคล็ดลับ:</b> เวลากรอกตัวเลข สามารถกดปุ่ม `Enter` ↵ เพื่อบันทึก หรือเพื่อเลื่อนลงไปช่องถัดไปได้เลย ไม่ต้องใช้เมาส์!
+                </div>
+
+                <button class="acc-btn">1. การเปิดกะ และลงเวลา</button>
+                <div class="acc-content">
+                    <p><b>ทำเพื่ออะไร? :</b> ระบุตัวบุคคลและบันทึกเวลาทำงาน</p>
+                    <p><b>วิธีทำ:</b></p>
+                    <ul>
+                        <li>ตรวจสอบ "หมายเลข POS"</li>
+                        <li>กรอก "ชื่อแคชเชียร์" ลงในช่องว่าง (ชื่อจะถูกประทับลงในสลิปตอนสั่งพิมพ์)</li>
+                    </ul>
+                </div>
+
+                <button class="acc-btn">2. การบันทึกรับ-จ่าย (หน้าแรก)</button>
+                <div class="acc-content">
+                    <p><b>ทำเพื่ออะไร? :</b> จดบันทึกยอดเงินโอน, บัตรสวัสดิการ และค่าใช้จ่ายต่างๆ ที่เกิดขึ้นระหว่างวัน</p>
+                    <p><b>วิธีทำ:</b></p>
+                    <ol>
+                        <li>คลิกเลือกประเภท: 🏦 เงินโอน, 💳 บัตร/รัฐ หรือ 💸 ค่าใช้จ่าย</li>
+                        <li>พิมพ์ชื่อรายการ (ถ้ามี)</li>
+                        <li>พิมพ์จำนวนเงิน</li>
+                        <li>กด <b>Enter</b> หรือปุ่ม "บันทึกรายการ"</li>
+                    </ol>
+                </div>
+
+                <button class="acc-btn">3. การขอแลกเงินย่อย</button>
+                <div class="acc-content">
+                    <p><b>ทำเพื่ออะไร? :</b> ใช้เมื่อต้องการแตกแบงก์ใหญ่เป็นเงินย่อย เพื่อเก็บสลิปไว้เป็นหลักฐาน</p>
+                    <p><b>วิธีทำ:</b></p>
+                    <ol>
+                        <li>กดปุ่ม <b>💵 ขอแลกเงิน</b> ที่เมนูด้านขวา</li>
+                        <li>กรอกจำนวน "เงินย่อย" ที่ต้องการลงในช่องว่าง (เช่น ช่อง 100 ใส่เลข 500)</li>
+                        <li>ตรวจสอบ "รวมเงินทั้งหมด" ด้านล่างให้ตรงกับเงินก้อนที่ส่งไปแลก</li>
+                        <li>กด <b>🖨️ พิมพ์ใบแลกเงิน</b> เก็บไว้ในลิ้นชัก</li>
+                    </ol>
+                </div>
+
+                <button class="acc-btn">4. นับเงินลิ้นชัก (พักเบรก / ปิดกะ)</button>
+                <div class="acc-content">
+                    <p><b>ทำเพื่ออะไร? :</b> เช็คยอดเงินจริงในลิ้นชักว่าตรงกับระบบไหม เพื่อหาข้อผิดพลาด</p>
+                    <p><b>วิธีทำ:</b></p>
+                    <ol>
+                        <li>กดปุ่ม <b>🧮 นับเงินลิ้นชัก</b></li>
+                        <li>พิมพ์ <b>ยอดขายเงินสด</b> (ดูยอดจากเครื่องแอปหลัก เช่น Loyverse)</li>
+                        <li>นับ <b>"ใบ" และ "เหรียญ"</b> ในลิ้นชักจริง แล้วกรอกจำนวนลงไป</li>
+                        <li>ดูผลลัพธ์: ระบบจะแจ้งทันทีว่า <b>ตรง / ขาด / เกิน</b> เท่าไหร่</li>
+                        <li>กด <b>🖨️ พิมพ์ใบนับเงิน</b> เพื่อเก็บหลักฐาน</li>
+                    </ol>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -256,10 +346,10 @@
             <tbody id="slipDrBody"></tbody>
         </table>
         <div class="slip-summary-box">
-            <div class="slip-summary-row"><span>ยอดขายเงินสด:</span> <span id="slipDrSales">0.00</span></div>
-            <div class="slip-summary-row" style="color: #666; font-size: 12px;"><span>หัก ค่าใช้จ่าย:</span> <span id="slipDrExpense">-0.00</span></div>
-            <div class="slip-summary-row" style="margin-top: 5px; border-top: 1px dotted #ccc; padding-top: 5px;"><span>ยอดที่ควรมี:</span> <span id="slipDrExpected">0.00</span></div>
-            <div class="slip-summary-row"><span>ยอดที่นับได้:</span> <span id="slipDrActual">0.00</span></div>
+            <div class="slip-summary-row"><span>ยอดขายเงินสด:</span> <span id="slipDrSales">0</span></div>
+            <div class="slip-summary-row" style="color: #666; font-size: 12px;"><span>หัก ค่าใช้จ่าย:</span> <span id="slipDrExpense">-0</span></div>
+            <div class="slip-summary-row" style="margin-top: 5px; border-top: 1px dotted #ccc; padding-top: 5px;"><span>ยอดที่ควรมี:</span> <span id="slipDrExpected">0</span></div>
+            <div class="slip-summary-row"><span>ยอดที่นับได้:</span> <span id="slipDrActual">0</span></div>
             <div class="slip-summary-row" style="margin-top:5px; border-top:1px dotted #000; padding-top:5px;">
                 <span>ผลการนับ:</span> <span id="slipDrDiff"></span>
             </div>
@@ -284,38 +374,43 @@
     </div>
 
     <script>
-        // 🛡️ ป้องกันลูกกลิ้งเมาส์เลื่อนแล้วค่าเปลี่ยนใน Input Number
+        // 🛡️ ป้องกันลูกกลิ้งเมาส์เลื่อนแล้วค่าเปลี่ยน
         document.addEventListener('wheel', function(event) {
-            if (document.activeElement.type === 'number') {
-                document.activeElement.blur();
+            if (document.activeElement.type === 'number') document.activeElement.blur();
+        });
+
+        // 🛡️ กด Enter เพื่อลงช่องถัดไป 
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const activeElem = document.activeElement;
+                if (activeElem && activeElem.classList.contains('num-input')) {
+                    e.preventDefault(); 
+                    const currentModal = activeElem.closest('.modal-content');
+                    if (currentModal) {
+                        const inputs = Array.from(currentModal.querySelectorAll('.num-input'));
+                        const currentIndex = inputs.indexOf(activeElem);
+                        if (currentIndex > -1 && currentIndex < inputs.length - 1) {
+                            inputs[currentIndex + 1].focus();
+                        } else {
+                            activeElem.blur(); 
+                        }
+                    }
+                }
             }
         });
 
         // 🛡️ Safe Data Loading
         let records = [];
-        try {
-            let rawData = JSON.parse(localStorage.getItem('posUltimateRecords'));
-            records = Array.isArray(rawData) ? rawData : [];
-        } catch(e) { records = []; }
-
+        try { let rawData = JSON.parse(localStorage.getItem('posUltimateRecords')); records = Array.isArray(rawData) ? rawData : []; } catch(e) { records = []; }
         let headerData = {};
-        try {
-            headerData = JSON.parse(localStorage.getItem('posUltimateHeader')) || {};
-        } catch(e) { headerData = {}; }
+        try { headerData = JSON.parse(localStorage.getItem('posUltimateHeader')) || {}; } catch(e) { headerData = {}; }
 
         // ================= POS CORE SCRIPT =================
         document.getElementById('headDate').innerText = new Date().toLocaleDateString('th-TH');
-        
         document.getElementById('headPos').value = headerData.pos || '';
         document.getElementById('headCashier').value = headerData.cashier || '';
-        if(document.getElementById('headTimeIn')) {
-            document.getElementById('headTimeIn').value = headerData.timeIn || new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-        }
 
-        function saveHeader() {
-            localStorage.setItem('posUltimateHeader', JSON.stringify({ pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value, timeIn: document.getElementById('headTimeIn').value }));
-        }
-
+        function saveHeader() { localStorage.setItem('posUltimateHeader', JSON.stringify({ pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value })); }
         function escapeHTML(str) { return (str||'-').toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
         
         function handleTypeChange() {
@@ -323,10 +418,10 @@
             const nameInput = document.getElementById('inputName');
             const amtInput = document.getElementById('inputAmount');
             if (type === 'transfer') { nameInput.style.display = 'none'; nameInput.value = 'เงินโอน'; amtInput.placeholder = "ยอดเงินโอน..."; amtInput.focus(); } 
-            else { nameInput.style.display = 'block'; nameInput.value = ''; amtInput.placeholder = "0.00"; nameInput.focus(); }
+            else { nameInput.style.display = 'block'; nameInput.value = ''; amtInput.placeholder = "0"; nameInput.focus(); }
         }
 
-        document.getElementById('inputAmount').addEventListener("keypress", function(e) { if (e.key === "Enter") saveRecord(); });
+        document.getElementById('inputAmount').addEventListener("keypress", function(e) { if (e.key === "Enter" && !e.target.classList.contains('num-input')) saveRecord(); });
         document.getElementById('inputName').addEventListener("keypress", function(e) { if (e.key === "Enter" && this.value.trim() !== "") document.getElementById('inputAmount').focus(); });
 
         function saveRecord() {
@@ -354,27 +449,42 @@
                 if (r.type === 'transfer') t += amt; else if (r.type === 'welfare') w += amt; else e += amt;
                 let badge = r.type==='transfer' ? '<span class="badge bg-tr">โอน</span>' : r.type==='welfare' ? '<span class="badge bg-wel">บัตร</span>' : '<span class="badge bg-exp">จ่าย</span>';
                 let cls = r.type==='transfer' ? 'row-transfer' : r.type==='welfare' ? 'row-welfare' : 'row-expense';
-                return `<tr class="${cls}"><td style="text-align:center; color:#ccc;">${i+1}</td><td style="font-size:12px; color:#666;">${r.time}</td><td style="text-align:center;">${badge}</td><td>${escapeHTML(r.name)}</td><td style="text-align:right; font-weight:bold;">${(parseFloat(r.amount)||0).toLocaleString(undefined, {minimumFractionDigits:2})}</td><td class="no-print" style="text-align:center;"><span class="action-btn" style="color:red;" onclick="deleteRecord(${i})">×</span></td></tr>`;
+                
+                // ไม่แสดงทศนิยม
+                return `<tr class="${cls}"><td style="text-align:center; color:#ccc;">${i+1}</td><td style="font-size:12px; color:#666;">${r.time}</td><td style="text-align:center;">${badge}</td><td>${escapeHTML(r.name)}</td><td style="text-align:right; font-weight:bold;">${(parseFloat(r.amount)||0).toLocaleString('en-US')}</td><td class="no-print" style="text-align:center;"><span class="action-btn" style="color:red;" onclick="deleteRecord(${i})">×</span></td></tr>`;
             }).join('');
             
-            document.getElementById('sumTransfer').innerText = (t/100).toLocaleString(undefined, {minimumFractionDigits:2});
-            document.getElementById('sumWelfare').innerText = (w/100).toLocaleString(undefined, {minimumFractionDigits:2});
-            document.getElementById('sumExpense').innerText = (e/100).toLocaleString(undefined, {minimumFractionDigits:2});
-            document.getElementById('sumNet').innerText = ((t+w)/100).toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('sumTransfer').innerText = (t/100).toLocaleString('en-US');
+            document.getElementById('sumWelfare').innerText = (w/100).toLocaleString('en-US');
+            document.getElementById('sumExpense').innerText = (e/100).toLocaleString('en-US');
+            document.getElementById('sumNet').innerText = ((t+w)/100).toLocaleString('en-US');
         }
 
         // ================= CONFIG DATA =================
         const denoms = [
-            { val: 1000, label: 'แบงก์ 1000', exLabel: '1000' },
-            { val: 500, label: 'แบงก์ 500', exLabel: '500' },
-            { val: 100, label: 'แบงก์ 100', exLabel: '100' },
-            { val: 50, label: 'แบงก์ 50', exLabel: '50' },
-            { val: 20, label: 'แบงก์ 20', exLabel: '20' },
-            { val: 10, label: 'เหรียญ 10', exLabel: 'เหรียญ 10' },
-            { val: 5, label: 'เหรียญ 5', exLabel: 'เหรียญ 5' },
-            { val: 2, label: 'เหรียญ 2', exLabel: 'เหรียญ 2' },
+            { val: 1000, label: 'แบงก์ 1000', exLabel: '1000' }, { val: 500, label: 'แบงก์ 500', exLabel: '500' },
+            { val: 100, label: 'แบงก์ 100', exLabel: '100' }, { val: 50, label: 'แบงก์ 50', exLabel: '50' },
+            { val: 20, label: 'แบงก์ 20', exLabel: '20' }, { val: 10, label: 'เหรียญ 10', exLabel: 'เหรียญ 10' },
+            { val: 5, label: 'เหรียญ 5', exLabel: 'เหรียญ 5' }, { val: 2, label: 'เหรียญ 2', exLabel: 'เหรียญ 2' },
             { val: 1, label: 'เหรียญ 1', exLabel: 'เหรียญ 1' }
         ];
+
+        // ================= MANUAL MODAL LOGIC =================
+        function openManualModal() { 
+            // โหลดสคริปต์ Accordion เมื่อเปิด
+            var acc = document.getElementsByClassName("acc-btn");
+            for (var i = 0; i < acc.length; i++) {
+                // กันการ add event ซ้ำ
+                acc[i].onclick = function() {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) panel.style.maxHeight = null;
+                    else panel.style.maxHeight = panel.scrollHeight + "px";
+                };
+            }
+            document.getElementById('manualModal').style.display = 'flex'; 
+        }
+        function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
 
         // ================= DRAWER RECONCILIATION LOGIC =================
         const STARTING_FLOAT = 9700;
@@ -387,15 +497,13 @@
             let totalExpense = 0;
             records.forEach(r => { if(r.type === 'expense') totalExpense += (parseFloat(r.amount)||0); });
             
-            document.getElementById('dsExpense').innerText = `-${totalExpense.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            document.getElementById('dsExpense').innerText = `-${totalExpense.toLocaleString('en-US')}`;
             document.getElementById('drawerModal').dataset.expense = totalExpense;
             
-            // เคลียร์ค่า input
             document.getElementById('dsCashSales').value = '';
             denoms.forEach(d => { document.getElementById(`dr_qty_${d.val}`).value = ''; document.getElementById(`dr_val_${d.val}`).innerText = '0'; });
             
-            calcDrawer(); 
-            document.getElementById('drawerModal').style.display = 'flex';
+            calcDrawer(); document.getElementById('drawerModal').style.display = 'flex';
         }
 
         function closeDrawerModal() { document.getElementById('drawerModal').style.display = 'none'; }
@@ -405,16 +513,16 @@
             denoms.forEach(d => {
                 let qty = parseInt(document.getElementById(`dr_qty_${d.val}`).value) || 0;
                 let val = qty * d.val;
-                document.getElementById(`dr_val_${d.val}`).innerText = val.toLocaleString();
+                document.getElementById(`dr_val_${d.val}`).innerText = val.toLocaleString('en-US');
                 actualCash += val;
             });
-            document.getElementById('dsActual').innerText = actualCash.toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('dsActual').innerText = actualCash.toLocaleString('en-US');
             
             let totalExpense = parseFloat(document.getElementById('drawerModal').dataset.expense) || 0;
             let cashSales = parseFloat(document.getElementById('dsCashSales').value) || 0;
             let expectedCash = STARTING_FLOAT + cashSales - totalExpense;
             
-            document.getElementById('dsExpected').innerText = expectedCash.toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('dsExpected').innerText = expectedCash.toLocaleString('en-US');
 
             let diff = actualCash - expectedCash;
             let diffBox = document.getElementById('dsDiffBox');
@@ -425,8 +533,8 @@
             } else {
                 btn.disabled = false;
                 if (diff === 0) { diffBox.className = 'ds-diff status-ok'; diffBox.innerHTML = '✅ ยอดเงินตรงเป๊ะ (Match)'; } 
-                else if (diff > 0) { diffBox.className = 'ds-diff status-over'; diffBox.innerHTML = `🟡 เงินเกิน: +${diff.toLocaleString(undefined, {minimumFractionDigits:2})} บาท`; } 
-                else { diffBox.className = 'ds-diff status-short'; diffBox.innerHTML = `🔴 เงินขาด: ${diff.toLocaleString(undefined, {minimumFractionDigits:2})} บาท`; }
+                else if (diff > 0) { diffBox.className = 'ds-diff status-over'; diffBox.innerHTML = `🟡 เงินเกิน: +${diff.toLocaleString('en-US')} บาท`; } 
+                else { diffBox.className = 'ds-diff status-short'; diffBox.innerHTML = `🔴 เงินขาด: ${diff.toLocaleString('en-US')} บาท`; }
             }
         }
 
@@ -439,12 +547,12 @@
             let tbody = '';
             denoms.forEach(d => {
                 let qty = parseInt(document.getElementById(`dr_qty_${d.val}`).value) || 0;
-                if(qty > 0) tbody += `<tr><td>${d.label}</td><td>${qty}</td><td>${(qty * d.val).toLocaleString()}</td></tr>`;
+                if(qty > 0) tbody += `<tr><td>${d.label}</td><td>${qty}</td><td>${(qty * d.val).toLocaleString('en-US')}</td></tr>`;
             });
             document.getElementById('slipDrBody').innerHTML = tbody;
             
             let cashSales = parseFloat(document.getElementById('dsCashSales').value) || 0;
-            document.getElementById('slipDrSales').innerText = cashSales.toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('slipDrSales').innerText = cashSales.toLocaleString('en-US');
             document.getElementById('slipDrExpense').innerText = document.getElementById('dsExpense').innerText;
             document.getElementById('slipDrExpected').innerText = document.getElementById('dsExpected').innerText;
             document.getElementById('slipDrActual').innerText = document.getElementById('dsActual').innerText;
@@ -453,7 +561,6 @@
             document.body.classList.add('printing-drawer');
             closeDrawerModal();
             window.print();
-            setTimeout(() => { document.body.classList.remove('printing-drawer'); }, 1000);
         }
 
         // ================= EXCHANGE MODAL LOGIC =================
@@ -470,7 +577,7 @@
         function calcExchange() {
             let total = 0;
             denoms.filter(d=>d.val<1000).forEach(d => { total += parseFloat(document.getElementById(`ex_${d.val}`).value) || 0; });
-            document.getElementById('exTotalTxt').innerText = total.toLocaleString();
+            document.getElementById('exTotalTxt').innerText = total.toLocaleString('en-US');
             document.getElementById('btnExSubmit').disabled = (total <= 0);
         }
 
@@ -483,24 +590,98 @@
             let tbody = ''; let totalAmount = 0;
             denoms.filter(d=>d.val<1000).forEach(d => {
                 let val = parseFloat(document.getElementById(`ex_${d.val}`).value) || 0;
-                if(val > 0) { tbody += `<tr><td>${d.exLabel}</td><td style="text-align:right;">${val.toLocaleString()}</td></tr>`; totalAmount += val; }
+                if(val > 0) { tbody += `<tr><td>${d.exLabel}</td><td style="text-align:right;">${val.toLocaleString('en-US')}</td></tr>`; totalAmount += val; }
             });
             document.getElementById('slipExBody').innerHTML = tbody;
-            document.getElementById('slipExTotalVal').innerText = totalAmount.toLocaleString();
+            document.getElementById('slipExTotalVal').innerText = totalAmount.toLocaleString('en-US');
 
             document.body.classList.add('printing-exchange');
             closeExchangeModal();
             window.print();
-            setTimeout(() => { document.body.classList.remove('printing-exchange'); }, 1000);
         }
 
-        // Initialize Tables & App
+        // ================= EXCEL EXPORT SCRIPT =================
+        function exportToExcel() {
+            if(records.length === 0) { alert('⚠️ ไม่มีข้อมูลสำหรับ Export'); return; }
+
+            const ITEMS_PER_COLUMN = 35; 
+            const totalRecords = records.length;
+            let t = 0, w = 0, e = 0;
+
+            records.forEach(r => { 
+                let amt = Math.round((parseFloat(r.amount) || 0) * 100);
+                if(r.type === 'transfer') t += amt; else if(r.type === 'welfare') w += amt; else e += amt; 
+            });
+
+            let dateStr = document.getElementById('headDate').innerText;
+            let cashier = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
+            
+            let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>table{border-collapse:collapse;}th{background:#eee;border:1px solid #000;text-align:center;}td{border:1px solid #ccc;padding:5px;}.bg-g{background:#d1fae5;}.bg-b{background:#e0f2fe;}.bg-r{background:#fee2e2;}</style></head><body><h3>รายงานยอดขาย ${dateStr} (แคชเชียร์: ${cashier})</h3><table><thead><tr>`;
+            
+            let columnSets = Math.ceil(totalRecords / ITEMS_PER_COLUMN);
+            if(columnSets < 1) columnSets = 1;
+
+            for(let c = 0; c < columnSets; c++) {
+                html += `<th>เวลา</th><th>ประเภท</th><th>รายการ</th><th>ยอดเงิน</th>`;
+                if(c < columnSets - 1) html += `<th style="border:none;width:20px;"></th>`; 
+            }
+            html += `</tr></thead><tbody>`;
+
+            for(let r = 0; r < ITEMS_PER_COLUMN; r++) {
+                if(r >= totalRecords && r >= ITEMS_PER_COLUMN) break; 
+                html += `<tr>`;
+                for(let c = 0; c < columnSets; c++) {
+                    let dataIndex = r + (c * ITEMS_PER_COLUMN);
+                    let rec = records[dataIndex];
+                    if(rec) {
+                        let bg = rec.type === 'transfer' ? 'bg-g' : (rec.type === 'welfare' ? 'bg-b' : 'bg-r');
+                        let remark = rec.isEdited ? '(แก้ไข)' : '';
+                        let displayAmt = (parseFloat(rec.amount) || 0).toLocaleString('en-US');
+                        html += `<td class="${bg}">${rec.time}</td><td class="${bg}">${rec.type}</td><td class="${bg}">${escapeHTML(rec.name)} ${remark}</td><td class="${bg}" style="text-align:right;">${displayAmt}</td>`;
+                    } else {
+                        html += `<td></td><td></td><td></td><td></td>`;
+                    }
+                    if(c < columnSets - 1) html += `<td style="border:none;"></td>`;
+                }
+                html += `</tr>`;
+            }
+            
+            let totalTransfer = (t / 100).toLocaleString('en-US');
+            let totalWelfare = (w / 100).toLocaleString('en-US');
+            let totalExpense = (e / 100).toLocaleString('en-US');
+            let totalNet = ((t + w) / 100).toLocaleString('en-US');
+
+            html += `</tbody></table><br><table border="1" style="margin-top:20px;">
+                <tr><td colspan="2" align="right">รวมเงินโอน:</td><td align="right">${totalTransfer}</td></tr>
+                <tr><td colspan="2" align="right">รวมบัตร/รัฐ:</td><td align="right">${totalWelfare}</td></tr>
+                <tr><td colspan="2" align="right" style="color:red;">ค่าใช้จ่าย (ไม่หัก):</td><td align="right" style="color:red;">${totalExpense}</td></tr>
+                <tr><td colspan="2" align="right"><b>สุทธิ (โอน+บัตร):</b></td><td align="right"><b>${totalNet}</b></td></tr>
+            </table></body></html>`;
+            
+            let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Report_${dateStr.replace(/\//g,'-')}_${cashier}.xls`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ================= PRINT EVENT CLEANUP =================
+        function printSummaryOnly() {
+            document.body.classList.add('print-summary-only');
+            window.print();
+        }
+
+        window.addEventListener('afterprint', function() {
+            document.body.classList.remove('printing-drawer', 'printing-exchange', 'print-summary-only');
+        });
+
+        // Initialize App
         initDrawerTable();
         initExchangeTable();
         handleTypeChange();
         renderTable();
-        
-        function exportToExcel() { alert('ฟังก์ชัน Export ทำงานปกติ'); }
     </script>
 </body>
 </html>
