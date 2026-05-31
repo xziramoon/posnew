@@ -159,7 +159,6 @@
         .calc-input-label .sub { font-size: 11px; color: #999; font-weight: 400; }
         .calc-input-wrap { position: relative; display: flex; align-items: center; margin-bottom: 14px; }
         
-        /* สไตล์ช่องกรอกแบบ Text (เพิ่มใหม่สำหรับชื่อ) */
         .calc-input-wrap input[type="text"] { width: 100%; height: 50px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 0 14px; font-size: 18px; font-weight: 600; font-family: 'Sarabun', sans-serif; color: #1a1a1a; outline: none; transition: 0.15s; }
         .calc-input-wrap input[type="text"]:focus { border-color: var(--green60); box-shadow: 0 0 0 3px rgba(26,122,82,0.12); background: #fff; }
         .calc-input-wrap input[type="text"]::placeholder { color: #ccc; font-weight: 300; font-size: 16px; }
@@ -426,7 +425,7 @@
         <div class="modal-content" style="max-width: 500px;"><div class="modal-header"><h3 style="color: var(--primary);">📖 คู่มือการใช้งานระบบ</h3><button class="close-btn" onclick="closeManualModal()">×</button></div><div class="manual-body"><p style="text-align:center; color:#666;">(ระบบทำงานปกติ)</p></div></div>
     </div>
 
-    <!-- ✨ MODAL คำนวณ 60:40 (เพิ่มช่องใส่ชื่อลูกค้า) -->
+    <!-- ✨ MODAL คำนวณ 60:40 -->
     <div id="calc6040Modal" class="modal-overlay">
         <div class="modal-content">
             <div class="calc-hero">
@@ -438,7 +437,7 @@
             </div>
             <div class="calc-body">
                 
-                <!-- ✅ เพิ่มช่องกรอกชื่อลูกค้า -->
+                <!-- ช่องกรอกชื่อลูกค้า -->
                 <div class="calc-input-label"><span>ชื่อลูกค้า / หมายเหตุ</span><span class="sub">ระบุหรือไม่ก็ได้</span></div>
                 <div class="calc-input-wrap" style="margin-bottom: 12px;">
                     <input type="text" id="c60CustName" placeholder="เช่น คุณสมชาย..." style="padding-right: 14px;">
@@ -568,29 +567,66 @@
         function saveHeader() { localStorage.setItem('posUltimateHeader', JSON.stringify({ pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value })); }
         function escapeHTML(str) { return (str||'-').toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
         
+        // ==========================================
+        // ✅ ปรับปรุง: การทำงานเมื่อกดเลือกประเภทด้านหน้า POS
+        // ==========================================
         function handleTypeChange() {
             const type = document.querySelector('input[name="payType"]:checked').value;
             const nameInput = document.getElementById('inputName');
             const amtInput = document.getElementById('inputAmount');
-            if (type === 'transfer') { nameInput.style.display = 'none'; nameInput.value = 'เงินโอน'; amtInput.placeholder = "ยอดเงินโอน..."; amtInput.focus(); } 
-            else if (type === 'thaiplus') { nameInput.style.display = 'none'; nameInput.value = 'รัฐช่วย (ไทยพลัส)'; amtInput.placeholder = "ยอดสิทธิ..."; amtInput.focus(); } 
-            else { nameInput.style.display = 'block'; nameInput.value = ''; amtInput.placeholder = "0"; nameInput.focus(); }
+
+            if (type === 'transfer') {
+                nameInput.style.display = 'none';
+                nameInput.value = 'เงินโอน';
+                amtInput.placeholder = "ยอดเงินโอน...";
+                amtInput.focus();
+            } else if (type === 'thaiplus') {
+                // ✅ แก้ไข: เปิดให้แสดงช่องชื่อลูกค้าสำหรับไทยพลัส
+                nameInput.style.display = 'block';
+                nameInput.value = '';
+                nameInput.placeholder = "ชื่อลูกค้า (ถ้ามี)...";
+                amtInput.placeholder = "ยอดสแกน...";
+                nameInput.focus();
+            } else {
+                nameInput.style.display = 'block';
+                nameInput.value = '';
+                nameInput.placeholder = "ระบุรายการ...";
+                amtInput.placeholder = "0";
+                nameInput.focus();
+            }
         }
 
         document.getElementById('inputAmount').addEventListener("keypress", function(e) { if (e.key === "Enter" && !e.target.classList.contains('num-input')) saveRecord(); });
         document.getElementById('inputName').addEventListener("keypress", function(e) { if (e.key === "Enter" && this.value.trim() !== "") document.getElementById('inputAmount').focus(); });
 
+        // ==========================================
+        // ✅ ปรับปรุง: ระบบการบันทึกรายการหน้า POS (Smart Tagging)
+        // ==========================================
         function saveRecord() {
             const amtIn = document.getElementById('inputAmount'), nameIn = document.getElementById('inputName');
             const type = document.querySelector('input[name="payType"]:checked').value;
             const amount = parseFloat(amtIn.value);
-            let name = nameIn.value.trim() || "-";
+            let rawName = nameIn.value.trim();
+
             if (isNaN(amount) || amount <= 0) return;
-            records.push({ time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}), type, name, amount, isEdited: false });
+
+            let finalName = rawName || "-";
+            
+            // ✅ ผูก Tag (ไทยพลัส) อัตโนมัติ เพื่อให้แยกประเภทชัดเจน
+            if (type === 'thaiplus') {
+                finalName = rawName !== "" ? `${rawName} (ไทยพลัส)` : "ลูกค้าสแกน (ไทยพลัส)";
+            }
+
+            records.push({ time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}), type, name: finalName, amount, isEdited: false });
             localStorage.setItem('posUltimateRecords', JSON.stringify(records));
             renderTable(); 
-            amtIn.value = ''; if(type !== 'transfer' && type !== 'thaiplus') nameIn.value = '';
-            if (type === 'transfer' || type === 'thaiplus') amtIn.focus(); else nameIn.focus();
+            
+            amtIn.value = ''; 
+            if(type !== 'transfer') nameIn.value = '';
+            
+            // คืน Focus กลับไปให้ถูกช่อง
+            if (type === 'transfer') amtIn.focus(); 
+            else nameIn.focus();
         }
 
         function deleteRecord(index) { if(confirm('ลบรายการนี้?')) { records.splice(index, 1); localStorage.setItem('posUltimateRecords', JSON.stringify(records)); renderTable(); } }
@@ -891,7 +927,7 @@
         }
 
         // ==========================================
-        // ✅ บันทึกเฉพาะยอดลูกค้าจ่าย และนำชื่อมาแสดงแทน
+        // 🔴 ปิดการบันทึกยอด "รัฐช่วย" ออก 100% 
         // ==========================================
         function apply6040ToPOS() {
             var price = parseFloat(document.getElementById('c60Price').value) || 0;
@@ -905,7 +941,7 @@
             var custName = document.getElementById('c60CustName').value.trim();
             var recordName = custName !== "" ? (custName + " (ไทยพลัส)") : "ลูกค้าจ่าย (ไทยพลัส)";
 
-            // บันทึกเฉพาะยอดที่ลูกค้าจ่าย เข้าหมวดไทยพลัส 
+            // ✅ บันทึกเฉพาะยอดที่ลูกค้าจ่าย เข้าหมวดไทยพลัส 
             if (customerPays > 0) { 
                 records.push({ time: timeStr, type: 'thaiplus', name: recordName, amount: customerPays, isEdited: false }); 
             }
