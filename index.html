@@ -181,6 +181,22 @@
         .chips-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
         .chip60 { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; padding: 4px 10px; color: #555; cursor: pointer; transition: all 0.12s; font-family: 'Sarabun', sans-serif; }
         .chip60:hover { background: var(--green60-bg); border-color: var(--green60-light); color: var(--green60); }
+
+        /* ✨ NEW: ตัวเลือกโหมดคำนวณ 3 แบบ */
+        .mode60-selector { display: flex; gap: 5px; background: #f1f5f9; padding: 5px; border-radius: 10px; margin-bottom: 16px; }
+        .mode60-tab { flex: 1; text-align: center; padding: 9px 4px; border-radius: 7px; cursor: pointer; font-size: 12px; font-weight: 700; color: #64748b; background: transparent; border: 2px solid transparent; transition: all 0.15s; line-height: 1.3; }
+        .mode60-tab .m60-ico { display: block; font-size: 16px; margin-bottom: 2px; }
+        .mode60-tab:hover { background: #e2e8f0; color: #334155; }
+        .mode60-tab.active { background: var(--green60); color: #fff; box-shadow: 0 3px 8px -2px rgba(26,122,82,0.4); }
+        .mode60-field { display: none; }
+        .mode60-field.show { display: block; }
+        /* กล่องคำตอบใหญ่สำหรับโหมด "เงินที่มี" และ "อยากได้ของ" */
+        .big-answer { background: linear-gradient(135deg, var(--green60), #14663f); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; color: #fff; }
+        .big-answer .ba-label { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 4px; font-weight: 600; }
+        .big-answer .ba-value { font-size: 32px; font-weight: 800; line-height: 1; font-family: 'Sarabun', sans-serif; }
+        .big-answer .ba-sub { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 8px; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; }
+        .big-answer.topup { background: linear-gradient(135deg, #1e40af, #1e3a8a); }
+        .big-answer.warn-topup { background: linear-gradient(135deg, var(--amber60), #7c4a00); }
         .calc-result-panel { background: var(--green60); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
         .calc-result-top { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .calc-result-top .label { font-size: 12px; color: rgba(255,255,255,0.75); margin-bottom: 2px; }
@@ -216,6 +232,16 @@
         .toggle-body { display: none; padding-bottom: 8px; }
         .toggle-body.open { display: block; }
 
+        /* ✨ v5 UPGRADE: Undo Toast / Tab Count / Edit Amount */
+        .undo-toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e293b; color: #fff; padding: 12px 18px; border-radius: 10px; display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 999; opacity: 0; transition: all 0.25s ease; pointer-events: none; max-width: 90vw; }
+        .undo-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+        .undo-toast button { background: var(--warning); border: none; color: #000; font-weight: 800; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-family: 'Sarabun'; font-size: 13px; white-space: nowrap; }
+        .tab-count { display: inline-block; background: rgba(0,0,0,0.12); border-radius: 10px; padding: 0 6px; font-size: 10px; margin-left: 4px; min-width: 12px; text-align: center; }
+        .filter-tab.active .tab-count { background: rgba(255,255,255,0.25); }
+        .edited-mark { font-size: 10px; color: var(--warning); margin-left: 3px; }
+        .amt-editable, .name-editable { cursor: pointer; }
+        .amt-editable:active, .name-editable:active { color: var(--primary); }
+
         /* ป้องกันโซนพิมพ์ */
         #printExchangeArea, #printDrawerArea, #printSummaryArea, #printReconArea { display: none !important; pointer-events: none; }
 
@@ -226,7 +252,7 @@
             @page { margin: 5mm; size: auto; }
             * { color: #000000 !important; border-color: #000000 !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: white; margin: 0; padding: 0; width: 100%; height: auto; }
-            .no-print, .floating-controls, .modal-overlay, .filter-container { display: none !important; }
+            .no-print, .floating-controls, .modal-overlay, .filter-container, .undo-toast { display: none !important; }
             
             body:not(.printing-exchange):not(.printing-drawer):not(.print-summary-only):not(.printing-recon) .paper { width: 100%; max-width: none !important; padding: 0 !important; box-shadow: none !important; border: none !important; margin: 0 !important; height: auto !important; overflow: visible !important; }
             body:not(.printing-exchange):not(.printing-drawer):not(.print-summary-only):not(.printing-recon) .input-card { display: none !important; }
@@ -270,6 +296,8 @@
         <button onclick="open6040Modal()" class="float-btn" style="color: var(--green60); border-color: var(--green60); font-weight: 700;">🇹🇭 60:40</button>
         <button onclick="openReconModal()" class="float-btn" style="color: var(--cyan-recon); border-color: var(--cyan-recon); font-weight: 700;">📱 กระทบยอดโอน</button>
         <button onclick="exportToExcel()" class="float-btn" style="color: green;">📥 Excel</button>
+        <button onclick="backupData()" class="float-btn" style="color: #0f766e; border-color: #0f766e;">💾 สำรองข้อมูล</button>
+        <button onclick="document.getElementById('restoreFile').click()" class="float-btn" style="color: #b45309; border-color: #b45309;">📂 กู้คืนข้อมูล</button>
         <button onclick="printMain()" class="float-btn">🖨️ พิมพ์ (เต็ม)</button>
         <button onclick="printSummaryOnly()" class="float-btn" style="color: #2563eb; font-weight: 800;">🎫 พิมพ์ปิดกะ</button>
         <button onclick="resetAll()" class="float-btn" style="color: red;">↺ เริ่มใหม่</button>
@@ -436,22 +464,56 @@
                 </div>
             </div>
             <div class="calc-body">
-                
-                <!-- ช่องกรอกชื่อลูกค้า -->
-                <div class="calc-input-label"><span>ชื่อลูกค้า / หมายเหตุ</span><span class="sub">ระบุหรือไม่ก็ได้</span></div>
-                <div class="calc-input-wrap" style="margin-bottom: 12px;">
-                    <input type="text" id="c60CustName" placeholder="เช่น คุณสมชาย..." style="padding-right: 14px;">
+
+                <!-- ✨ NEW: ตัวเลือกโหมดคำนวณ -->
+                <div class="mode60-selector">
+                    <div class="mode60-tab active" id="m60-price" onclick="setMode60('price')"><span class="m60-ico">📦</span>จากราคาสินค้า</div>
+                    <div class="mode60-tab" id="m60-money" onclick="setMode60('money')"><span class="m60-ico">💰</span>มีเงินเท่านี้</div>
+                    <div class="mode60-tab" id="m60-topup" onclick="setMode60('topup')"><span class="m60-ico">➕</span>อยากได้ของ</div>
                 </div>
 
-                <div class="calc-input-label"><span>ราคาสินค้าทั้งหมด</span><span class="sub">กรอกตัวเลข</span></div>
-                <div class="calc-input-wrap"><input type="number" id="c60Price" inputmode="decimal" placeholder="0" min="0"><span class="calc-input-unit">฿</span></div>
-                
+                <!-- โหมด 1: ราคาสินค้า (เดิม) -->
+                <div class="mode60-field show" data-field="price">
+                    <div class="calc-input-label"><span>ราคาสินค้าทั้งหมด</span><span class="sub">กรอกตัวเลข</span></div>
+                    <div class="calc-input-wrap"><input type="number" id="c60Price" inputmode="decimal" placeholder="0" min="0"><span class="calc-input-unit">฿</span></div>
+                </div>
+
+                <!-- ✨ โหมด 2: มีเงินเท่านี้ ซื้อได้สูงสุดเท่าไร -->
+                <div class="mode60-field" data-field="money">
+                    <div class="calc-input-label"><span>เงินตัวเองในเป๋าตัง</span><span class="sub">ยอดที่ลูกค้าเติมไว้</span></div>
+                    <div class="calc-input-wrap"><input type="number" id="c60Wallet" inputmode="decimal" placeholder="0" min="0"><span class="calc-input-unit">฿</span></div>
+                    <div class="chips-row"><span style="font-size:11px; color:#aaa; align-self:center;">เลือกเร็ว:</span><span class="chip60" onclick="setWallet60(50)">50฿</span><span class="chip60" onclick="setWallet60(80)">80฿</span><span class="chip60" onclick="setWallet60(100)">100฿</span><span class="chip60" onclick="setWallet60(133)">133฿</span><span class="chip60" onclick="setWallet60(200)">200฿</span></div>
+                </div>
+
+                <!-- ✨ โหมด 3: อยากได้ของราคานี้ ต้องเติมเท่าไร -->
+                <div class="mode60-field" data-field="topup">
+                    <div class="calc-input-label"><span>ราคาสินค้าที่อยากได้</span><span class="sub">กรอกราคาเต็ม</span></div>
+                    <div class="calc-input-wrap"><input type="number" id="c60WantPrice" inputmode="decimal" placeholder="0" min="0"><span class="calc-input-unit">฿</span></div>
+                    <div class="calc-input-label"><span>เงินตัวเองในเป๋าตังตอนนี้</span><span class="sub">ยอดที่มีอยู่</span></div>
+                    <div class="calc-input-wrap"><input type="number" id="c60HavePrice" inputmode="decimal" placeholder="0" min="0"><span class="calc-input-unit">฿</span></div>
+                </div>
+
                 <div class="calc-input-label"><span>รัฐช่วยไปแล้ววันนี้</span><span class="sub">ดูจากแอปเป๋าตัง</span></div>
                 <div class="calc-input-wrap"><input type="number" id="c60Used" inputmode="decimal" placeholder="0" min="0" max="200"><span class="calc-input-unit">฿</span></div>
                 
                 <div class="quota-bar-wrap"><div class="quota-bar-header"><span>ใช้ไปแล้ว: <strong id="c60UsedLbl">0</strong> ฿</span><span class="qrem" id="c60RemLbl">เหลืออีก 200 ฿</span></div><div class="bar-track-sm"><div class="bar-fill-sm" id="c60Bar" style="width:0%"></div></div></div>
                 <div class="chips-row"><span style="font-size:11px; color:#aaa; align-self:center;">เลือกเร็ว:</span><span class="chip60" onclick="setUsed60(0)">ยังไม่ได้ใช้</span><span class="chip60" onclick="setUsed60(50)">ใช้ 50฿</span><span class="chip60" onclick="setUsed60(100)">ใช้ 100฿</span><span class="chip60" onclick="setUsed60(150)">ใช้ 150฿</span><span class="chip60" onclick="setUsed60(200)">หมดแล้ว</span></div>
                 <div class="alert60" id="c60Alert"><span id="c60AlertIcon" style="font-size:15px; flex-shrink:0; margin-top:1px;"></span><span id="c60AlertMsg"></span></div>
+
+                <!-- ✨ กล่องคำตอบใหญ่: โหมด "มีเงินเท่านี้" -->
+                <div class="big-answer mode60-field" data-field="money" id="c60MoneyBox">
+                    <div class="ba-label">🛒 ซื้อของได้สูงสุด</div>
+                    <div class="ba-value" id="c60MaxBuy">0.00 ฿</div>
+                    <div class="ba-sub" id="c60MoneySub"></div>
+                </div>
+
+                <!-- ✨ กล่องคำตอบใหญ่: โหมด "อยากได้ของ" -->
+                <div class="big-answer topup mode60-field" data-field="topup" id="c60TopupBox">
+                    <div class="ba-label">➕ ต้องเติมเงินเข้าเป๋าตังอีก</div>
+                    <div class="ba-value" id="c60TopupAmt">0.00 ฿</div>
+                    <div class="ba-sub" id="c60TopupSub"></div>
+                </div>
+
                 <div class="calc-result-panel">
                     <div class="calc-result-top">
                         <div><div class="label" style="color:#fef08a; font-weight:600; font-size:13px;">📲 ยอดที่ต้องเติม / สแกนจ่าย</div><div class="big-amt" id="c60CustPay">0.00 ฿</div></div>
@@ -535,6 +597,10 @@
     <div id="printDrawerArea"><div class="slip-title">นับเงินในลิ้นชัก</div><div class="slip-header"><div>วันที่: <span id="slipDrDate"></span> เวลา: <span id="slipDrTime"></span></div><div>แคชเชียร์: <span id="slipDrCashier" style="font-weight: bold;"></span></div></div><table class="slip-table"><thead><tr><th>ชนิดเงิน</th><th>จำนวน</th><th>มูลค่า</th></tr></thead><tbody id="slipDrBody"></tbody></table><div class="slip-summary-box"><div class="slip-summary-row"><span>ยอดขายเงินสด:</span> <span id="slipDrSales">0</span></div><div class="slip-summary-row" style="color: #666; font-size: 12px;"><span>หัก ค่าใช้จ่าย:</span> <span id="slipDrExpense">-0</span></div><div class="slip-summary-row" style="margin-top: 5px; border-top: 1px dotted #ccc; padding-top: 5px;"><span>ยอดที่ควรมี:</span> <span id="slipDrExpected">0</span></div><div class="slip-summary-row"><span>ยอดที่นับได้:</span> <span id="slipDrActual">0</span></div><div class="slip-summary-row" style="margin-top:5px; border-top:1px dotted #000; padding-top:5px;"><span>ผลการนับ:</span> <span id="slipDrDiff"></span></div></div><div class="slip-footer-sig">ผู้ตรวจสอบ ......................................</div></div>
     <div id="printExchangeArea"><div class="slip-title">ขอแลกเงิน</div><div class="slip-header"><div>วันที่: <span id="slipExDate"></span> เวลา: <span id="slipExTime"></span></div><div>แคชเชียร์: <span id="slipExCashier" style="font-weight: bold;"></span></div></div><table class="slip-table"><thead><tr><th>รายการเงินแลก</th><th>จำนวนบาท</th></tr></thead><tbody id="slipExBody"></tbody></table><div class="slip-summary-box" style="text-align: center;">รวมเงินทั้งหมด: <span id="slipExTotalVal">0</span> บาท</div><div class="slip-footer-sig">ผู้รับเงิน ......................................</div></div>
 
+    <!-- ✨ v5: Undo Toast + Restore file input -->
+    <div id="undoToast" class="undo-toast no-print"><span id="undoToastMsg">ลบรายการแล้ว</span><button onclick="undoDelete()">↩️ กู้คืน</button></div>
+    <input type="file" id="restoreFile" accept=".json,application/json" style="display:none" onchange="restoreData(event)">
+
     <!-- JAVASCRIPT CORE -->
     <script>
         document.addEventListener('wheel', function(event) { if (document.activeElement.type === 'number') document.activeElement.blur(); });
@@ -563,6 +629,20 @@
         document.getElementById('headDate').innerText = new Date().toLocaleDateString('th-TH');
         document.getElementById('headPos').value = headerData.pos || '';
         document.getElementById('headCashier').value = headerData.cashier || '';
+
+        // ✨ v5: ตรวจจับข้อมูลค้างจากวันก่อน (New Day Guard)
+        (function newDayGuard() {
+            const todayKey = new Date().toLocaleDateString('th-TH');
+            const savedDate = localStorage.getItem('posUltimateDate') || '';
+            if (records.length > 0 && savedDate && savedDate !== todayKey) {
+                if (confirm('⚠️ พบข้อมูลของวันก่อน (' + savedDate + ') ค้างอยู่ ' + records.length + ' รายการ\n\nกด OK = สำรองเป็นไฟล์ + เริ่มวันใหม่\nกด Cancel = ใช้ข้อมูลเดิมต่อ')) {
+                    backupData(savedDate);
+                    records = [];
+                    localStorage.removeItem('posUltimateRecords');
+                }
+            }
+            localStorage.setItem('posUltimateDate', todayKey);
+        })();
 
         function saveHeader() { localStorage.setItem('posUltimateHeader', JSON.stringify({ pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value })); }
         function escapeHTML(str) { return (str||'-').toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
@@ -618,6 +698,7 @@
             }
 
             records.push({ time: new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}), type, name: finalName, amount, isEdited: false });
+            localStorage.setItem('posUltimateDate', new Date().toLocaleDateString('th-TH')); // ✨ v5
             localStorage.setItem('posUltimateRecords', JSON.stringify(records));
             renderTable(); 
             
@@ -629,8 +710,114 @@
             else nameIn.focus();
         }
 
-        function deleteRecord(index) { if(confirm('ลบรายการนี้?')) { records.splice(index, 1); localStorage.setItem('posUltimateRecords', JSON.stringify(records)); renderTable(); } }
-        function resetAll() { if(confirm('⚠️ ล้างข้อมูลเริ่มกะใหม่?')) { records = []; localStorage.removeItem('posUltimateRecords'); renderTable(); } }
+        // ✨ v5: ลบแบบกู้คืนได้ (Undo Toast)
+        let undoStack = [];
+        let undoTimer = null;
+        function deleteRecord(index) {
+            const removed = records.splice(index, 1)[0];
+            if (!removed) return;
+            undoStack.push({ record: removed, index: index });
+            localStorage.setItem('posUltimateRecords', JSON.stringify(records));
+            renderTable();
+            document.getElementById('undoToastMsg').innerText = 'ลบ "' + (removed.name || '-') + '" ' + (parseFloat(removed.amount)||0).toLocaleString('en-US') + ' ฿ แล้ว';
+            document.getElementById('undoToast').classList.add('show');
+            clearTimeout(undoTimer);
+            undoTimer = setTimeout(hideUndoToast, 6000);
+        }
+        function hideUndoToast() { document.getElementById('undoToast').classList.remove('show'); undoStack = []; }
+        function undoDelete() {
+            const last = undoStack.pop();
+            if (last) {
+                records.splice(Math.min(last.index, records.length), 0, last.record);
+                localStorage.setItem('posUltimateRecords', JSON.stringify(records));
+                renderTable();
+            }
+            clearTimeout(undoTimer);
+            hideUndoToast();
+        }
+
+        // ✨ v5: แก้ไขยอดเงินในตาราง (แตะที่ตัวเลข)
+        function editAmount(index) {
+            const r = records[index];
+            if (!r) return;
+            const input = prompt('✏️ แก้ไขยอดเงินของ "' + (r.name || '-') + '"', r.amount);
+            if (input === null) return;
+            const val = parseFloat(input);
+            if (isNaN(val) || val <= 0) { alert('⚠️ ยอดเงินไม่ถูกต้อง'); return; }
+            r.amount = val;
+            r.isEdited = true;
+            localStorage.setItem('posUltimateRecords', JSON.stringify(records));
+            renderTable();
+        }
+
+        // ✨ v5.1: แก้ไขชื่อรายการในตาราง (แตะที่ชื่อ)
+        function editName(index) {
+            const r = records[index];
+            if (!r) return;
+            const input = prompt('✏️ แก้ไขชื่อรายการ', r.name || '-');
+            if (input === null) return;
+            let newName = input.trim();
+            if (newName === '') newName = '-';
+            // รักษา Tag (ไทยพลัส) ให้อัตโนมัติ เพื่อไม่ให้แยกประเภทหลุด
+            if (r.type === 'thaiplus' && !newName.includes('(ไทยพลัส)')) {
+                newName = (newName === '-' ? 'ลูกค้าสแกน' : newName) + ' (ไทยพลัส)';
+            }
+            r.name = newName;
+            r.isEdited = true;
+            localStorage.setItem('posUltimateRecords', JSON.stringify(records));
+            renderTable();
+        }
+
+        function resetAll() {
+            if (!confirm('⚠️ ล้างข้อมูลเริ่มกะใหม่?')) return;
+            if (records.length > 0 && confirm('💾 ต้องการสำรองข้อมูลเป็นไฟล์ก่อนล้างหรือไม่?')) backupData();
+            records = [];
+            localStorage.removeItem('posUltimateRecords');
+            hideUndoToast();
+            renderTable();
+        }
+
+        // ✨ v5: สำรอง / กู้คืนข้อมูล (JSON)
+        function backupData(labelDate) {
+            if (records.length === 0) { alert('⚠️ ไม่มีข้อมูลสำหรับสำรอง'); return; }
+            const dateLabel = labelDate || document.getElementById('headDate').innerText;
+            const payload = {
+                app: 'POS-Reconciliations',
+                date: dateLabel,
+                exportedAt: new Date().toISOString(),
+                header: { pos: document.getElementById('headPos').value, cashier: document.getElementById('headCashier').value },
+                records: records
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'POS_Backup_' + dateLabel.replace(/\//g, '-') + '_' + new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}).replace(':','') + '.json';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+        function restoreData(ev) {
+            const file = ev.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const recs = Array.isArray(data) ? data : data.records;
+                    if (!Array.isArray(recs)) throw new Error('invalid');
+                    if (!confirm('📂 พบ ' + recs.length + ' รายการในไฟล์สำรอง\nต้องการแทนที่ข้อมูลปัจจุบัน (' + records.length + ' รายการ) หรือไม่?')) { ev.target.value = ''; return; }
+                    records = recs;
+                    localStorage.setItem('posUltimateRecords', JSON.stringify(records));
+                    if (data.header) {
+                        if (data.header.pos) document.getElementById('headPos').value = data.header.pos;
+                        if (data.header.cashier) document.getElementById('headCashier').value = data.header.cashier;
+                        saveHeader();
+                    }
+                    renderTable();
+                    alert('✅ กู้คืนข้อมูลสำเร็จ ' + records.length + ' รายการ');
+                } catch (err) { alert('❌ ไฟล์สำรองไม่ถูกต้อง'); }
+                ev.target.value = '';
+            };
+            reader.readAsText(file);
+        }
 
         function setFilter(type) {
             currentFilter = type;
@@ -641,14 +828,14 @@
 
         function renderTable() {
             const tbody = document.getElementById('tableBody'); 
-            let t=0, w=0, tp=0, e=0;
+            let t=0, w=0, tp=0, e=0, cT=0, cW=0, cP=0, cE=0;
             
             records.forEach(r => {
                 const amt = Math.round((parseFloat(r.amount) || 0) * 100);
-                if (r.type === 'transfer') t += amt; 
-                else if (r.type === 'welfare') w += amt; 
-                else if (r.type === 'thaiplus') tp += amt; 
-                else e += amt;
+                if (r.type === 'transfer') { t += amt; cT++; } 
+                else if (r.type === 'welfare') { w += amt; cW++; } 
+                else if (r.type === 'thaiplus') { tp += amt; cP++; } 
+                else { e += amt; cE++; }
             });
 
             tbody.innerHTML = records.map((r, i) => { return {...r, originalIndex: i}; })
@@ -656,7 +843,8 @@
                 .map((r) => {
                     let badge = r.type==='transfer' ? '<span class="badge bg-tr">โอน</span>' : r.type==='welfare' ? '<span class="badge bg-wel">บัตร</span>' : r.type==='thaiplus' ? '<span class="badge bg-thaiplus">ไทยพลัส</span>' : '<span class="badge bg-exp">จ่าย</span>';
                     let cls = r.type==='transfer' ? 'row-transfer' : r.type==='welfare' ? 'row-welfare' : r.type==='thaiplus' ? 'row-thaiplus' : 'row-expense';
-                    return `<tr class="${cls}"><td style="text-align:center; color:#ccc;">${r.originalIndex+1}</td><td style="font-size:12px; color:#666;">${r.time}</td><td style="text-align:center;">${badge}</td><td>${escapeHTML(r.name)}</td><td style="text-align:right; font-weight:bold;">${(parseFloat(r.amount)||0).toLocaleString('en-US')}</td><td class="no-print" style="text-align:center;"><span class="action-btn" style="color:red;" onclick="deleteRecord(${r.originalIndex})">×</span></td></tr>`;
+                    let editedMark = r.isEdited ? '<span class="edited-mark">✎</span>' : '';
+                    return `<tr class="${cls}"><td style="text-align:center; color:#ccc;">${r.originalIndex+1}</td><td style="font-size:12px; color:#666;">${r.time}</td><td style="text-align:center;">${badge}</td><td class="name-editable" onclick="editName(${r.originalIndex})" title="แตะเพื่อแก้ไขชื่อ">${escapeHTML(r.name)}${editedMark}</td><td class="amt-editable" style="text-align:right; font-weight:bold;" onclick="editAmount(${r.originalIndex})" title="แตะเพื่อแก้ไขยอด">${(parseFloat(r.amount)||0).toLocaleString('en-US')}</td><td class="no-print" style="text-align:center;"><span class="action-btn" style="color:red;" onclick="deleteRecord(${r.originalIndex})">×</span></td></tr>`;
                 }).join('');
 
             document.getElementById('sumTransfer').innerText = (t/100).toLocaleString('en-US');
@@ -664,6 +852,19 @@
             document.getElementById('sumThaiPlus').innerText = (tp/100).toLocaleString('en-US');
             document.getElementById('sumExpense').innerText = (e/100).toLocaleString('en-US');
             document.getElementById('sumNet').innerText = ((t+w+tp)/100).toLocaleString('en-US');
+            updateTabCounts(cT, cW, cP, cE); // ✨ v5
+        }
+
+        // ✨ v5: Badge จำนวนรายการบนแท็บกรอง
+        function setTabLabel(id, text, count) {
+            document.getElementById(id).innerHTML = count > 0 ? text + '<span class="tab-count">' + count + '</span>' : text;
+        }
+        function updateTabCounts(cT, cW, cP, cE) {
+            setTabLabel('tab-all', 'ทั้งหมด', cT + cW + cP + cE);
+            setTabLabel('tab-transfer', 'โอน', cT);
+            setTabLabel('tab-welfare', 'บัตรรัฐ', cW);
+            setTabLabel('tab-thaiplus', 'ไทยพลัส', cP);
+            setTabLabel('tab-expense', 'ค่าใช้จ่าย', cE);
         }
 
         const denoms = [ { val: 1000, label: 'แบงก์ 1000', exLabel: '1000' }, { val: 500, label: 'แบงก์ 500', exLabel: '500' }, { val: 100, label: 'แบงก์ 100', exLabel: '100' }, { val: 50, label: 'แบงก์ 50', exLabel: '50' }, { val: 20, label: 'แบงก์ 20', exLabel: '20' }, { val: 10, label: 'เหรียญ 10', exLabel: 'เหรียญ 10' }, { val: 5, label: 'เหรียญ 5', exLabel: 'เหรียญ 5' }, { val: 2, label: 'เหรียญ 2', exLabel: 'เหรียญ 2' }, { val: 1, label: 'เหรียญ 1', exLabel: 'เหรียญ 1' } ];
@@ -705,7 +906,7 @@
             const now = new Date();
             document.getElementById('slipDrDate').innerText = document.getElementById('headDate').innerText;
             document.getElementById('slipDrTime').innerText = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('slipDrCashier').innerText = escapeHTML(document.getElementById('headCashier').value || 'ไม่ระบุชื่อ');
+            document.getElementById('slipDrCashier').innerText = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
             let tbody = '';
             denoms.forEach(d => {
                 let qty = parseInt(document.getElementById(`dr_qty_${d.val}`).value) || 0;
@@ -734,7 +935,7 @@
             const now = new Date();
             document.getElementById('slipExDate').innerText = document.getElementById('headDate').innerText;
             document.getElementById('slipExTime').innerText = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('slipExCashier').innerText = escapeHTML(document.getElementById('headCashier').value || 'ไม่ระบุชื่อ');
+            document.getElementById('slipExCashier').innerText = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
             let tbody = ''; let totalAmount = 0;
             denoms.filter(d=>d.val<1000).forEach(d => {
                 let val = parseFloat(document.getElementById(`ex_${d.val}`).value) || 0;
@@ -753,7 +954,7 @@
             let t = 0, w = 0, tp = 0, e = 0;
             records.forEach(r => { let amt = Math.round((parseFloat(r.amount) || 0) * 100); if(r.type === 'transfer') t += amt; else if(r.type === 'welfare') w += amt; else if(r.type === 'thaiplus') tp += amt; else e += amt; });
             let dateStr = document.getElementById('headDate').innerText, cashier = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
-            let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>table{border-collapse:collapse;}th{background:#eee;border:1px solid #000;}td{border:1px solid #ccc;padding:5px;}.bg-g{background:#d1fae5;}.bg-b{background:#e0f2fe;}.bg-tp{background:#E4F4EC;}.bg-r{background:#fee2e2;}</style></head><body><h3>รายงานยอดขาย ${dateStr} (แคชเชียร์: ${cashier})</h3><table><thead><tr><th>เวลา</th><th>ประเภท</th><th>รายการ</th><th>ยอดเงิน</th></tr></thead><tbody>`;
+            let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>table{border-collapse:collapse;}th{background:#eee;border:1px solid #000;}td{border:1px solid #ccc;padding:5px;}.bg-g{background:#d1fae5;}.bg-b{background:#e0f2fe;}.bg-tp{background:#E4F4EC;}.bg-r{background:#fee2e2;}</style></head><body><h3>รายงานยอดขาย ${dateStr} (แคชเชียร์: ${escapeHTML(cashier)})</h3><table><thead><tr><th>เวลา</th><th>ประเภท</th><th>รายการ</th><th>ยอดเงิน</th></tr></thead><tbody>`;
             records.forEach(rec => {
                 let bg = rec.type === 'transfer' ? 'bg-g' : (rec.type === 'welfare' ? 'bg-b' : (rec.type === 'thaiplus' ? 'bg-tp' : 'bg-r'));
                 let typeText = rec.type === 'thaiplus' ? 'ไทยพลัส' : rec.type;
@@ -825,7 +1026,7 @@
             const now = new Date();
             document.getElementById('slipRcDate').innerText = document.getElementById('headDate').innerText;
             document.getElementById('slipRcTime').innerText = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('slipRcCashier').innerText = escapeHTML(document.getElementById('headCashier').value || 'ไม่ระบุชื่อ');
+            document.getElementById('slipRcCashier').innerText = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
             
             document.getElementById('slipRcPos1Transfer').innerText = (parseFloat(document.getElementById('reconPos1Transfer').value) || 0).toLocaleString('en-US');
             document.getElementById('slipRcPos2').innerText = (parseFloat(document.getElementById('reconPos2').value) || 0).toLocaleString('en-US');
@@ -848,8 +1049,8 @@
             const now = new Date();
             document.getElementById('slipSumDate').innerText = document.getElementById('headDate').innerText;
             document.getElementById('slipSumTime').innerText = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('slipSumPos').innerText = escapeHTML(document.getElementById('headPos').value || '01');
-            document.getElementById('slipSumCashier').innerText = escapeHTML(document.getElementById('headCashier').value || 'ไม่ระบุชื่อ');
+            document.getElementById('slipSumPos').innerText = document.getElementById('headPos').value || '01';
+            document.getElementById('slipSumCashier').innerText = document.getElementById('headCashier').value || 'ไม่ระบุชื่อ';
             document.getElementById('slipSumCount').innerText = records.length;
             
             document.getElementById('slipSumTransfer').innerText = document.getElementById('sumTransfer').innerText;
@@ -864,18 +1065,181 @@
         
         window.addEventListener('afterprint', function() { clearPrintClasses(); });
 
+        var currentMode60 = 'price';
+
         function open6040Modal() {
             document.getElementById('calc6040Modal').style.display = 'flex';
-            document.getElementById('c60CustName').value = '';
             document.getElementById('c60Price').value = '';
             document.getElementById('c60Used').value = '';
+            document.getElementById('c60Wallet').value = '';
+            document.getElementById('c60WantPrice').value = '';
+            document.getElementById('c60HavePrice').value = '';
+            setMode60('price');
             calc60();
             setTimeout(function(){ document.getElementById('c60Price').focus(); }, 150);
         }
 
         function close6040Modal() { document.getElementById('calc6040Modal').style.display = 'none'; }
-        function setUsed60(val) { document.getElementById('c60Used').value = val; calc60(); }
+        function setUsed60(val) { document.getElementById('c60Used').value = val; recalc60(); }
+        function setWallet60(val) { document.getElementById('c60Wallet').value = val; recalc60(); }
         function fmt60(n) { return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        // ✨ NEW: สลับโหมดคำนวณ 3 แบบ
+        function setMode60(mode) {
+            currentMode60 = mode;
+            // อัปเดตปุ่มแท็บ
+            document.getElementById('m60-price').classList.toggle('active', mode === 'price');
+            document.getElementById('m60-money').classList.toggle('active', mode === 'money');
+            document.getElementById('m60-topup').classList.toggle('active', mode === 'topup');
+            // แสดง/ซ่อน field ตามโหมด
+            document.querySelectorAll('.mode60-field').forEach(function(el) {
+                el.classList.toggle('show', el.getAttribute('data-field') === mode);
+            });
+            // แผงผลลัพธ์เดิม (ราคาสินค้า) แสดงเฉพาะโหมด price
+            var oldPanel = document.querySelector('#calc6040Modal .calc-result-panel');
+            if (oldPanel) oldPanel.style.display = (mode === 'price') ? 'block' : 'none';
+            // ปุ่มบันทึกลง POS ใช้ได้เฉพาะโหมด price เท่านั้น
+            var btn = document.getElementById('btnSave6040');
+            btn.style.display = (mode === 'price') ? 'block' : 'none';
+            recalc60();
+            // โฟกัสช่องแรกของโหมดนั้น
+            setTimeout(function() {
+                var focusId = mode === 'price' ? 'c60Price' : mode === 'money' ? 'c60Wallet' : 'c60WantPrice';
+                var el = document.getElementById(focusId);
+                if (el) el.focus();
+            }, 100);
+        }
+
+        // ✨ ตัวกระจายงานคำนวณตามโหมด
+        function recalc60() {
+            if (currentMode60 === 'price') calc60();
+            else if (currentMode60 === 'money') calcMoney60();
+            else if (currentMode60 === 'topup') calcTopup60();
+            updateQuotaBar60();
+        }
+
+        // ✨ อัปเดตแถบสิทธิคงเหลือ (ใช้ร่วมทุกโหมด)
+        function updateQuotaBar60() {
+            var used = Math.max(0, Math.min(200, parseFloat(document.getElementById('c60Used').value) || 0));
+            var remaining = 200 - used;
+            var pct = Math.min(100, (used / 200) * 100);
+            document.getElementById('c60Bar').style.width = pct + '%';
+            document.getElementById('c60Bar').className = 'bar-fill-sm' + (remaining <= 0 ? ' empty' : remaining <= 60 ? ' low' : '');
+            document.getElementById('c60UsedLbl').textContent = fmt60(used);
+            var remLbl = document.getElementById('c60RemLbl');
+            if (remaining <= 0) { remLbl.textContent = 'หมดสิทธิวันนี้'; remLbl.className = 'qrem empty'; }
+            else { remLbl.textContent = 'เหลืออีก ' + fmt60(remaining) + ' ฿'; remLbl.className = 'qrem' + (remaining <= 60 ? ' low' : ''); }
+        }
+
+        // ✨ โหมด 2: "มีเงินตัวเองเท่านี้ ซื้อของได้สูงสุดเท่าไร?"
+        // ตรรกะ: รัฐช่วย 60% แต่ไม่เกินสิทธิคงเหลือ (Q), ลูกค้าจ่าย 40% จากเงินตัวเอง (W)
+        //   - ราคาที่สิทธิเริ่มตัน = Q / 0.6
+        //   - ถ้าเงินตัวเองพอถึงจุดนั้น -> สิทธิตันก่อน -> Pmax = W + Q
+        //   - ถ้าเงินตัวเองหมดก่อน -> Pmax = W / 0.4
+        function calcMoney60() {
+            var W = Math.max(0, parseFloat(document.getElementById('c60Wallet').value) || 0);
+            var used = Math.max(0, Math.min(200, parseFloat(document.getElementById('c60Used').value) || 0));
+            var Q = 200 - used;
+
+            var alertBox = document.getElementById('c60Alert'), alertMsg = document.getElementById('c60AlertMsg'), alertIcon = document.getElementById('c60AlertIcon');
+
+            if (W <= 0) {
+                document.getElementById('c60MaxBuy').textContent = '0.00 ฿';
+                document.getElementById('c60MoneySub').textContent = 'กรอกเงินตัวเองในเป๋าตังก่อน';
+                alertBox.className = 'alert60';
+                return;
+            }
+
+            // เงินตัวเองที่ต้องใช้เพื่อทำให้สิทธิตันพอดี = 0.4 * (Q/0.6) = Q * (2/3)
+            var walletToMaxGov = Q * (2/3);
+            var Pmax, govUsed, custPays;
+
+            if (W >= walletToMaxGov) {
+                // สิทธิตันก่อน: รัฐจ่ายเต็ม Q, ที่เหลือลูกค้าจ่าย 100%
+                Pmax = W + Q;
+                govUsed = Q;
+                custPays = W;
+            } else {
+                // เงินตัวเองหมดก่อนสิทธิ: จ่าย 40/60 ตามปกติ
+                Pmax = W / 0.4;
+                govUsed = Pmax * 0.6;
+                custPays = W;
+            }
+
+            document.getElementById('c60MaxBuy').textContent = fmt60(Pmax) + ' ฿';
+            document.getElementById('c60MoneySub').innerHTML =
+                'รัฐช่วยจ่าย <strong>' + fmt60(govUsed) + ' ฿</strong> · เงินตัวเองจ่าย <strong>' + fmt60(custPays) + ' ฿</strong>' +
+                '<br>สิทธิเหลือหลังซื้อ: ' + fmt60(Q - govUsed) + ' ฿';
+
+            // แจ้งเตือน
+            if (Q <= 0) {
+                alertBox.className = 'alert60 show danger'; alertIcon.textContent = '🚫';
+                alertMsg.innerHTML = '<strong>สิทธิวันนี้หมดแล้ว</strong> ลูกค้าจ่ายเองเต็มจำนวน ซื้อได้สูงสุด = เงินที่มี ' + fmt60(W) + ' ฿';
+            } else if (W >= walletToMaxGov) {
+                alertBox.className = 'alert60 show warn'; alertIcon.textContent = '⚠️';
+                var capNote = (used <= 0) ? ' (เพดานสิทธิ 200 ฿/วัน)' : '';
+                alertMsg.innerHTML = 'เงินตัวเองเยอะกว่าสิทธิ ซื้อได้เต็มสิทธิที่ราคา ' + fmt60(Pmax) + ' ฿' + capNote + ' ถ้าซื้อเกินนี้ ส่วนเกินจ่ายเต็มราคา';
+            } else {
+                alertBox.className = 'alert60 show ok'; alertIcon.textContent = '✅';
+                alertMsg.innerHTML = 'ใช้เงินตัวเอง ' + fmt60(W) + ' ฿ ได้เต็มที่ รัฐสมทบอีก ' + fmt60(govUsed) + ' ฿';
+            }
+        }
+
+        // ✨ โหมด 3: "อยากได้ของราคานี้ ต้องเติมเงินอีกเท่าไร?"
+        // เงินตัวเองที่ต้องใช้ = ราคา - min(0.6*ราคา, สิทธิคงเหลือ)
+        // ต้องเติม = max(0, เงินที่ต้องใช้ - เงินที่มี)
+        function calcTopup60() {
+            var P = Math.max(0, parseFloat(document.getElementById('c60WantPrice').value) || 0);
+            var have = Math.max(0, parseFloat(document.getElementById('c60HavePrice').value) || 0);
+            var used = Math.max(0, Math.min(200, parseFloat(document.getElementById('c60Used').value) || 0));
+            var Q = 200 - used;
+
+            var box = document.getElementById('c60TopupBox');
+            var alertBox = document.getElementById('c60Alert'), alertMsg = document.getElementById('c60AlertMsg'), alertIcon = document.getElementById('c60AlertIcon');
+
+            if (P <= 0) {
+                document.getElementById('c60TopupAmt').textContent = '0.00 ฿';
+                document.getElementById('c60TopupSub').textContent = 'กรอกราคาสินค้าที่อยากได้ก่อน';
+                box.className = 'big-answer topup mode60-field show';
+                alertBox.className = 'alert60';
+                return;
+            }
+
+            var govPays = Math.min(P * 0.6, Q);
+            var custNeed = P - govPays;      // เงินตัวเองที่ต้องใช้จริง
+            var topup = Math.max(0, custNeed - have);
+
+            if (topup <= 0) {
+                box.className = 'big-answer mode60-field show'; // เขียว = ไม่ต้องเติม
+                document.getElementById('c60TopupAmt').textContent = 'ไม่ต้องเติม ✓';
+            } else {
+                box.className = 'big-answer topup mode60-field show'; // น้ำเงิน = ต้องเติม
+                document.getElementById('c60TopupAmt').textContent = fmt60(topup) + ' ฿';
+            }
+
+            document.getElementById('c60TopupSub').innerHTML =
+                'รัฐช่วย <strong>' + fmt60(govPays) + ' ฿</strong> · เงินตัวเองต้องใช้ <strong>' + fmt60(custNeed) + ' ฿</strong>' +
+                '<br>มีอยู่แล้ว ' + fmt60(have) + ' ฿' + (topup > 0 ? ' → เติมอีก ' + fmt60(topup) + ' ฿' : ' (พอแล้ว)');
+
+            // แจ้งเตือน: แยกกรณีเกินเพดานต่อวัน กับ สิทธิถูกใช้ไปบางส่วน
+            var fullQuotaPrice = Q / 0.6;  // ราคาที่รัฐช่วยเต็มสิทธิคงเหลือพอดี
+            if (Q <= 0) {
+                alertBox.className = 'alert60 show danger'; alertIcon.textContent = '🚫';
+                alertMsg.innerHTML = '<strong>สิทธิวันนี้หมดแล้ว</strong> ลูกค้าจ่ายเองเต็มราคา ' + fmt60(P) + ' ฿';
+            } else if (P * 0.6 > Q) {
+                alertBox.className = 'alert60 show warn'; alertIcon.textContent = '⚠️';
+                if (used <= 0) {
+                    // สิทธิเต็ม แต่ราคาเกินเพดาน 333.33฿/วัน
+                    alertMsg.innerHTML = '<strong>เกินเพดานสิทธิ/วันแล้ว</strong> รัฐช่วยได้สูงสุด 200 ฿ (ราคาไม่เกิน ' + fmt60(fullQuotaPrice) + ' ฿) ส่วนที่เกินลูกค้าจ่ายเต็ม';
+                } else {
+                    // สิทธิถูกใช้ไปบางส่วน
+                    alertMsg.innerHTML = '<strong>เกินสิทธิคงเหลือ</strong> วันนี้รัฐช่วยได้อีกแค่ ' + fmt60(Q) + ' ฿ (ซื้อได้เต็มสิทธิที่ราคา ' + fmt60(fullQuotaPrice) + ' ฿) ส่วนเกินลูกค้าจ่ายเต็ม';
+                }
+            } else {
+                alertBox.className = 'alert60 show ok'; alertIcon.textContent = '✅';
+                alertMsg.innerHTML = 'ใช้สิทธิได้ปกติ รัฐช่วย 60% = ' + fmt60(govPays) + ' ฿';
+            }
+        }
 
         function calc60() {
             var price = Math.max(0, parseFloat(document.getElementById('c60Price').value) || 0);
@@ -938,8 +1302,7 @@
             var customerPays = price - govPays;
             var timeStr = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
 
-            var custName = document.getElementById('c60CustName').value.trim();
-            var recordName = custName !== "" ? (custName + " (ไทยพลัส)") : "ลูกค้าจ่าย (ไทยพลัส)";
+            var recordName = "ลูกค้าจ่าย (ไทยพลัส)";
 
             // ✅ บันทึกเฉพาะยอดที่ลูกค้าจ่าย เข้าหมวดไทยพลัส 
             if (customerPays > 0) { 
@@ -952,27 +1315,56 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const nameInput = document.getElementById('c60CustName');
             const priceInput = document.getElementById('c60Price');
             const usedInput = document.getElementById('c60Used');
-            
-            if(nameInput) {
-                nameInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('c60Price').focus(); }
-                });
-            }
+            const walletInput = document.getElementById('c60Wallet');
+            const wantInput = document.getElementById('c60WantPrice');
+            const haveInput = document.getElementById('c60HavePrice');
+
             if(priceInput) {
-                priceInput.addEventListener('input', calc60);
+                priceInput.addEventListener('input', recalc60);
                 priceInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') { e.preventDefault(); document.getElementById('c60Used').focus(); }
                 });
             }
-            if(usedInput) {
-                usedInput.addEventListener('input', calc60);
-                usedInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnSave6040').click(); }
+            // ✨ โหมด "มีเงินเท่านี้"
+            if(walletInput) {
+                walletInput.addEventListener('input', recalc60);
+                walletInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('c60Used').focus(); }
                 });
             }
+            // ✨ โหมด "อยากได้ของ"
+            if(wantInput) {
+                wantInput.addEventListener('input', recalc60);
+                wantInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('c60HavePrice').focus(); }
+                });
+            }
+            if(haveInput) {
+                haveInput.addEventListener('input', recalc60);
+                haveInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('c60Used').focus(); }
+                });
+            }
+            if(usedInput) {
+                usedInput.addEventListener('input', recalc60);
+                usedInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (currentMode60 === 'price') document.getElementById('btnSave6040').click();
+                        else document.getElementById('c60Used').blur();
+                    }
+                });
+            }
+        });
+
+        // ✨ v5: กด ESC หรือแตะพื้นหลังเพื่อปิด Modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        });
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', function(e) { if (e.target === m) m.style.display = 'none'; });
         });
 
         // Initialize App
